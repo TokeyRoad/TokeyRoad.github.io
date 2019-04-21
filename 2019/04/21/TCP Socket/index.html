@@ -1,0 +1,312 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="TokeyRoad"><meta name="keywords" content="Road"><title>TCP Socket | 轩中听雨</title><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style-dark.css?v=2.0.3"><link rel="stylesheet" type="text/css" href="/css/highlight-dark.css?v=2.0.3"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css?v=2.0.3"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js?v=2.0.3"></script><script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js?v=2.0.3"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">TCP Socket</h1><a id="logo" href="/.">轩中听雨</a><p class="description">TokeyRoad</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="Arama"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">TCP Socket</h1><div class="post-meta"><a href="/2019/04/21/TCP Socket/#comments" class="comment-count"></a><p><span class="date">Apr 21, 2019</span><span><a href="/categories/网络协议/" class="category">网络协议</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>一个简单的TCP socket通讯的实例。</p>
+<p>功能简单说明：<br>服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。<br>其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。</p>
+<p>####一.服务端</p>
+<ol>
+<li><p>创建套接字</p>
+<pre><code>WORD sockVersion = MAKEWORD(2, 2);
+WSADATA wsaData;
+if (WSAStartup(sockVersion, &amp;wsaData) != 0) {
+    return 0;
+}
+//WSA(Windows Sockets Asynchronous，Windows异步套接字)的启动命令
+</code></pre></li>
+<li><p>绑定套接字到IP和端口</p>
+<pre><code>//创建并初始化socket
+SOCKET listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+if (listen_socket == INVALID_SOCKET) {
+    printf(&quot;socket init error code:%d&quot;, WSAGetLastError());
+    return 0;
+}
+//绑定结构
+struct sockaddr_in sin;
+sin.sin_family = AF_INET;
+sin.sin_port = htons(6666);
+sin.sin_addr.S_un.S_addr = INADDR_ANY;
+//绑定
+if (bind(listen_socket, (LPSOCKADDR)&amp;sin, sizeof(sin)) != 0) {
+    printf(&quot;bind socket error code:%d&quot;, WSAGetLastError());
+    closesocket(listen_socket);//注意socket回收
+    return 0;
+}
+</code></pre></li>
+<li><p>监听端口</p>
+<pre><code>//int listen( int sockfd, int backlog);
+//sockfd：用于标识一个已捆绑未连接套接口的描述字。
+//backlog：等待连接队列的最大长度。
+if (listen(listen_socket, 5) != 0) {
+    printf(&quot;listen socket error code:%d&quot;, WSAGetLastError());
+    closesocket(listen_socket);
+    return 0;
+}
+</code></pre></li>
+<li><p>等待客户端连接，每连接一个可以创建一个对应的套接字和线程去处理对应的消息</p>
+<pre><code>//等待客户端连接 线程在这里会阻塞
+sClient = accept(listen_socket, (LPSOCKADDR)&amp;remoteAddr, &amp;slen);
+
+if (sClient == INVALID_SOCKET) {
+    printf(&quot;accept client error code:%d&quot;, WSAGetLastError());
+    continue;
+}
+else {
+    printf(&quot;connect success\n&quot;);
+    DWORD handleID; 
+    //当连接成功时，创建一个线程处理该客户端的消息，然后继续等待下一个客户端的连接
+    HANDLE handleSecond = CreateThread(NULL, 0, ClientChat, (LPVOID)sClient, 0, &amp;handleID);
+}
+</code></pre></li>
+<li><p>处理完之后需要回收线程和回收socket</p>
+<pre><code>//回收线程
+CloseHandle(handle);
+//回收socket
+closesocket(listen_socket);
+//WSA套接字清理
+WSACleanup();
+</code></pre></li>
+</ol>
+<p>####二.客户端</p>
+<ol>
+<li><p>创建套接字，初始化等。（和服务端一致）</p>
+</li>
+<li><p>连接服务端</p>
+<pre><code>sockaddr_in sin;
+sin.sin_family = AF_INET;
+sin.sin_port = htons(6666);
+//sin.sin_addr.S_un.S_addr = inet_addr(&quot;127.0.0.1&quot;);
+inet_pton(AF_INET, &quot;192.168.0.190&quot;, (void*)&amp;sin.sin_addr.S_un.S_addr);
+// 与指定地址端口连接
+if (connect(clientSocket, (LPSOCKADDR)&amp;sin, sizeof(sin)) == SOCKET_ERROR) {
+    printf(&quot;connect error code:%d&quot;, WSAGetLastError());
+    closesocket(clientSocket);
+    return  0;
+}
+else {
+    printf(&quot;connect success\n&quot;);
+}
+</code></pre></li>
+<li><p>和服务端之间收发消息</p>
+<pre><code>char rcv[256] = &quot;&quot;;
+std::cout &lt;&lt; &quot;please input:&quot;;
+char sendData[128];
+while (std::cin &gt;&gt; sendData) {
+    // 向服务端发数据
+    int res = send(clientSocket, sendData, strlen(sendData), 0);
+    if (res == SOCKET_ERROR) {
+        printf(&quot;client send data error code:%d\n&quot;, WSAGetLastError());
+    }
+    else {
+        printf(&quot;client send data success\n&quot;);
+    }
+    //检测到发送的数据是stop时 断开连接
+    if (strcmp(sendData, &quot;stop&quot;) == 0) {
+        break;
+    }
+    //接收数据之前先清空缓冲区，否则会有前一次传输的脏数据
+    memset(rcv, 0, sizeof(rcv));
+    int rec_res = recv(clientSocket, rcv, sizeof(rcv), 0);
+    if (rec_res &gt; 0) {
+        printf(&quot;receive server bytes:%d, data:%s\n&quot;, res, rcv);
+        if (strcmp(rcv, &quot;stop&quot;) == 0) {
+            break;
+        }
+    }
+    else if (rec_res == 0) {
+        printf(&quot;socket has closed\n&quot;);
+    }
+    else {
+        printf(&quot;recv failed: %d\n&quot;, WSAGetLastError());
+    }
+    std::cout &lt;&lt; &quot;please input:&quot;;
+}
+</code></pre></li>
+<li>socket回收 同服务端</li>
+</ol>
+<p>源代码：<br>服务端：</p>
+<pre><code>//Server.cpp
+#include &lt;stdio.h&gt;
+#include &lt;WinSock2.h&gt;
+#include &lt;iostream&gt;
+#include &lt;process.h&gt;
+
+#pragma comment( lib, &quot;ws2_32.lib&quot;)
+
+#define MAX_THREAD 10
+struct ThreadMessage{
+    SOCKET socket;
+    DWORD id;
+};
+
+DWORD WINAPI ClientChat(LPVOID param);
+
+int main() {
+    WORD sockVersion = MAKEWORD(2, 2);
+    WSADATA wsaData;
+
+    if (WSAStartup(sockVersion, &amp;wsaData) != 0) {
+        return 0;
+    }
+    SOCKET listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (listen_socket == INVALID_SOCKET) {
+        printf(&quot;socket init error code:%d&quot;, WSAGetLastError());
+        return 0;
+    }
+
+    struct sockaddr_in sin;
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(6666);
+    sin.sin_addr.S_un.S_addr = INADDR_ANY;
+
+    if (bind(listen_socket, (LPSOCKADDR)&amp;sin, sizeof(sin)) != 0) {
+        printf(&quot;bind socket error code:%d&quot;, WSAGetLastError());
+        closesocket(listen_socket);
+        return 0;
+    }
+
+    if (listen(listen_socket, 5) != 0) {
+        printf(&quot;listen socket error code:%d&quot;, WSAGetLastError());
+        closesocket(listen_socket);
+        return 0;
+    }
+
+    sockaddr_in remoteAddr;
+    SOCKET sClient;
+    int slen = sizeof(remoteAddr);
+    char rcv[512];
+    ThreadMessage thread[MAX_THREAD];
+    int i = 0;
+    while (true) {
+        printf(&quot;server is ready, waiting for client ...&quot;);
+        sClient = accept(listen_socket, (LPSOCKADDR)&amp;remoteAddr, &amp;slen);
+
+        if (sClient == INVALID_SOCKET) {
+            printf(&quot;accept client error code:%d&quot;, WSAGetLastError());
+            continue;
+        }
+        else {
+            printf(&quot;connect success\n&quot;);
+            DWORD handleID; 
+            thread[i].id = i;
+            thread[i].socket = sClient;
+            HANDLE handleSecond = CreateThread(NULL, 0, ClientChat, &amp;thread[i], 0, &amp;handleID);
+            i++;
+        }
+
+    }
+
+    closesocket(listen_socket);
+    WSACleanup();
+
+    return 0;
+}
+
+DWORD WINAPI ClientChat(LPVOID param) {
+    ThreadMessage* msg = (ThreadMessage*)param;
+    HANDLE handle = GetCurrentThread();
+    if (msg-&gt;socket == INVALID_SOCKET) {
+        printf(&quot;thread change error code:%d&quot;, WSAGetLastError());
+        CloseHandle(handle);
+        return 0;
+    }
+    char rcv[256] = &quot;&quot;;
+    while (1) {
+        char sendData[256] = &quot;keep alive&quot;; 
+        memset(rcv, 0, strlen(rcv));
+        int res = recv(msg-&gt;socket, rcv, sizeof(rcv), 0);
+        if (res &gt; 0) {
+            printf(&quot;tag:%d, receive client bytes:%d, data:%s\n&quot;, msg-&gt;id, res, rcv);
+            if (strcmp(rcv, &quot;stop&quot;) == 0) {
+                memset(sendData, 0, strlen(sendData));
+                sprintf_s(sendData, &quot;stop&quot;);
+                send(msg-&gt;socket, sendData, strlen(sendData), 0);
+                break;
+            }
+            send(msg-&gt;socket, sendData, strlen(sendData), 0);
+        }
+        else if (res == 0) {
+            printf(&quot;socket has closed\n&quot;);
+        }
+    }
+    printf(&quot;close thread! \n&quot;);
+    CloseHandle(handle);
+
+}
+</code></pre><p>客户端：</p>
+<pre><code>//Client.cpp
+#include &lt;stdio.h&gt;
+#include &lt;WinSock2.h&gt;
+#include&lt;WS2tcpip.h&gt;
+#include &lt;iostream&gt;
+#pragma comment(lib, &quot;ws2_32.lib&quot;)
+
+int main() {
+    WORD wsaVer = MAKEWORD(2, 2);
+    WSADATA wsaData;
+
+    if (WSAStartup(wsaVer, &amp;wsaData) != 0) {
+        return 0;
+    }
+
+    SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (clientSocket == INVALID_SOCKET) {
+        printf(&quot;clientSocket error code:%d&quot;, WSAGetLastError());
+        return 0;
+    }
+
+    sockaddr_in sin;
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(6666);
+    //sin.sin_addr.S_un.S_addr = inet_addr(&quot;127.0.0.1&quot;);
+    inet_pton(AF_INET, &quot;192.168.0.190&quot;, (void*)&amp;sin.sin_addr.S_un.S_addr);
+
+    if (connect(clientSocket, (LPSOCKADDR)&amp;sin, sizeof(sin)) == SOCKET_ERROR) {
+        printf(&quot;connect error code:%d&quot;, WSAGetLastError());
+        closesocket(clientSocket);
+        return  0;
+    }
+    else {
+        printf(&quot;connect success\n&quot;);
+    }
+
+    char * sData = &quot;Hello Server!&quot;;
+    int res = send(clientSocket, sData, strlen(sData), 0);
+    if (res == SOCKET_ERROR) {
+        printf(&quot;client send data error code:%d\n&quot;, WSAGetLastError());
+    }
+    else {
+        printf(&quot;client send data success\n&quot;);
+    }
+    char rcv[256] = &quot;&quot;;
+    std::cout &lt;&lt; &quot;please input:&quot;;
+    char sendData[128];
+    while (std::cin &gt;&gt; sendData) {
+        int res = send(clientSocket, sendData, strlen(sendData), 0);
+        if (res == SOCKET_ERROR) {
+            printf(&quot;client send data error code:%d\n&quot;, WSAGetLastError());
+        }
+        else {
+            printf(&quot;client send data success\n&quot;);
+        }
+        if (strcmp(sendData, &quot;stop&quot;) == 0) {
+            break;
+        }
+        memset(rcv, 0, sizeof(rcv));
+        int rec_res = recv(clientSocket, rcv, sizeof(rcv), 0);
+        if (rec_res &gt; 0) {
+            printf(&quot;receive server bytes:%d, data:%s\n&quot;, res, rcv);
+            if (strcmp(rcv, &quot;stop&quot;) == 0) {
+                break;
+            }
+        }
+        else if (rec_res == 0) {
+            printf(&quot;socket has closed\n&quot;);
+        }
+        else {
+            printf(&quot;recv failed: %d\n&quot;, WSAGetLastError());
+        }
+        std::cout &lt;&lt; &quot;please input:&quot;;
+    }
+    closesocket(clientSocket);
+    std::cout &lt;&lt; &quot;socket close!\n&quot;;
+    system(&quot;pause&quot;);
+    return 0;
+}
+</code></pre></div><div class="post-copyright"><blockquote><p>原文作者: Tokey</p><p>原文链接: <a href="http://yoursite.com/2019/04/21/TCP Socket/">http://yoursite.com/2019/04/21/TCP Socket/</a></p><p>版权声明: 转载请注明出处(必须保留作者署名及链接)</p></blockquote></div><div class="tags"></div><div class="post-share"></div><div class="post-nav"><a href="/2019/03/30/HTTP请求方法/" class="next">HTTP请求方法</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/04/21/TCP Socket/">TCP Socket</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/30/HTTP请求方法/">HTTP请求方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/28/HTTP协议-1/">HTTP协议(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/23/压缩与解压/">压缩与解压</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/19/Web服务器搭建/">Web服务器搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/19/内存中堆和栈的理解/">内存中堆和栈的理解</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/19/内存分配的实例分析/">内存分配的实例分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/19/内存区介绍/">内存区介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/18/hello-world/">Hello World</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Liunx-指令学习/">Liunx 指令学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络协议/">网络协议</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">网站地图</a> |  <a href="/atom.xml">订阅本站</a> |  <a href="/about/">联系博主</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">Tokey.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.3"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.3" async></script></body></html>
