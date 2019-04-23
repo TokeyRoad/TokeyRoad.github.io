@@ -1,17 +1,15 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="TokeyRoad"><meta name="keywords" content="Road"><title>TCP Socket | 轩中听雨</title><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style-dark.css?v=2.0.3"><link rel="stylesheet" type="text/css" href="/css/highlight-dark.css?v=2.0.3"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css?v=2.0.3"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js?v=2.0.3"></script><script src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js?v=2.0.3"></script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">TCP Socket</h1><a id="logo" href="/.">轩中听雨</a><p class="description">TokeyRoad</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="Arama"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">TCP Socket</h1><div class="post-meta"><a href="/2019/04/21/TCP Socket/#comments" class="comment-count"></a><p><span class="date">Apr 21, 2019</span><span><a href="/categories/网络协议/" class="category">网络协议</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>一个简单的TCP socket通讯的实例。</p>
 <p>功能简单说明：<br>服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。<br>其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。</p>
-<p>####一.服务端</p>
+<p><strong>一.服务端</strong></p>
 <ol>
-<li><p>创建套接字</p>
-<pre><code>WORD sockVersion = MAKEWORD(2, 2);
+<li>创建套接字<pre><code>WORD sockVersion = MAKEWORD(2, 2);
 WSADATA wsaData;
 if (WSAStartup(sockVersion, &amp;wsaData) != 0) {
     return 0;
 }
 //WSA(Windows Sockets Asynchronous，Windows异步套接字)的启动命令
 </code></pre></li>
-<li><p>绑定套接字到IP和端口</p>
-<pre><code>//创建并初始化socket
+<li>绑定套接字到IP和端口<pre><code>//创建并初始化socket
 SOCKET listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 if (listen_socket == INVALID_SOCKET) {
     printf(&quot;socket init error code:%d&quot;, WSAGetLastError());
@@ -29,8 +27,7 @@ if (bind(listen_socket, (LPSOCKADDR)&amp;sin, sizeof(sin)) != 0) {
     return 0;
 }
 </code></pre></li>
-<li><p>监听端口</p>
-<pre><code>//int listen( int sockfd, int backlog);
+<li>监听端口<pre><code>//int listen( int sockfd, int backlog);
 //sockfd：用于标识一个已捆绑未连接套接口的描述字。
 //backlog：等待连接队列的最大长度。
 if (listen(listen_socket, 5) != 0) {
@@ -54,8 +51,7 @@ else {
     HANDLE handleSecond = CreateThread(NULL, 0, ClientChat, (LPVOID)sClient, 0, &amp;handleID);
 }
 </code></pre></li>
-<li><p>处理完之后需要回收线程和回收socket</p>
-<pre><code>//回收线程
+<li>处理完之后需要回收线程和回收socket<pre><code>//回收线程
 CloseHandle(handle);
 //回收socket
 closesocket(listen_socket);
@@ -63,7 +59,7 @@ closesocket(listen_socket);
 WSACleanup();
 </code></pre></li>
 </ol>
-<p>####二.客户端</p>
+<p><strong>二.客户端</strong></p>
 <ol>
 <li><p>创建套接字，初始化等。（和服务端一致）</p>
 </li>
@@ -83,8 +79,7 @@ else {
     printf(&quot;connect success\n&quot;);
 }
 </code></pre></li>
-<li><p>和服务端之间收发消息</p>
-<pre><code>char rcv[256] = &quot;&quot;;
+<li>和服务端之间收发消息<pre><code>char rcv[256] = &quot;&quot;;
 std::cout &lt;&lt; &quot;please input:&quot;;
 char sendData[128];
 while (std::cin &gt;&gt; sendData) {
