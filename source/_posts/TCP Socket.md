@@ -10,17 +10,21 @@ copyright: ture
 功能简单说明：
 服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。
 其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。
+	<!--more-->
 
 **一.服务端**
 
 1. 创建套接字
-		WORD sockVersion = MAKEWORD(2, 2);
-		WSADATA wsaData;
-		if (WSAStartup(sockVersion, &wsaData) != 0) {
-			return 0;
-		}
-		//WSA(Windows Sockets Asynchronous，Windows异步套接字)的启动命令
+```C++
+WORD sockVersion = MAKEWORD(2, 2);
+WSADATA wsaData;
+if (WSAStartup(sockVersion, &wsaData) != 0) {
+	return 0;
+}
+//WSA(Windows Sockets Asynchronous，Windows异步套接字)的启动命令
+```
 2. 绑定套接字到IP和端口
+```C++
 		//创建并初始化socket
 		SOCKET listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if (listen_socket == INVALID_SOCKET) {
@@ -38,7 +42,9 @@ copyright: ture
 			closesocket(listen_socket);//注意socket回收
 			return 0;
 		}
+```
 3. 监听端口
+```C++
 		//int listen( int sockfd, int backlog);
 		//sockfd：用于标识一个已捆绑未连接套接口的描述字。
 		//backlog：等待连接队列的最大长度。
@@ -47,7 +53,9 @@ copyright: ture
 			closesocket(listen_socket);
 			return 0;
 		}
+```
 4. 等待客户端连接，每连接一个可以创建一个对应的套接字和线程去处理对应的消息
+```C++
 		//等待客户端连接 线程在这里会阻塞
 		sClient = accept(listen_socket, (LPSOCKADDR)&remoteAddr, &slen);
 
@@ -61,19 +69,23 @@ copyright: ture
 			//当连接成功时，创建一个线程处理该客户端的消息，然后继续等待下一个客户端的连接
 			HANDLE handleSecond = CreateThread(NULL, 0, ClientChat, (LPVOID)sClient, 0, &handleID);
 		}
+```
 5. 处理完之后需要回收线程和回收socket
+```C++
 		//回收线程
 		CloseHandle(handle);
 		//回收socket
 		closesocket(listen_socket);
 		//WSA套接字清理
 		WSACleanup();
+```
 
 **二.客户端**
 
 1. 创建套接字，初始化等。（和服务端一致）
 
 2. 连接服务端
+```C++
 		sockaddr_in sin;
 		sin.sin_family = AF_INET;
 		sin.sin_port = htons(6666);
@@ -88,7 +100,9 @@ copyright: ture
 		else {
 			printf("connect success\n");
 		}
+```
 3. 和服务端之间收发消息
+```C++
 		char rcv[256] = "";
 		std::cout << "please input:";
 		char sendData[128];
@@ -122,12 +136,13 @@ copyright: ture
 			}
 			std::cout << "please input:";
 		}
+```
 4. socket回收 同服务端
 
 
 源代码：
 服务端：
-
+```C++
 		//Server.cpp
 		#include <stdio.h>
 		#include <WinSock2.h>
@@ -236,8 +251,9 @@ copyright: ture
 			CloseHandle(handle);
 		
 		}
+```
 客户端：
-
+```C++
 		//Client.cpp
 		#include <stdio.h>
 		#include <WinSock2.h>
@@ -317,3 +333,4 @@ copyright: ture
 			system("pause");
 			return 0;
 		}
+```

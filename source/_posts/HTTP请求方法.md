@@ -14,6 +14,7 @@ copyright: ture
 ​	HTTP1.0定义了三种请求方法：GET、POST和HEAD方法。
 
 ​	HTTP1.1新增了五种请求方法：OPTIONS、PUT、DELETE、TRACE和CONNECT方法。
+	<!--more-->
 
 1. GET：请求指定的页面信息，并返回实体主体。
 2. HEAD：类似于GET请求，只不过返回的响应中没有具体的内容，只是用于获取报头。

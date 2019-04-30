@@ -10,7 +10,8 @@ keywords: Road
 author: Tokey
 language: zh-CN
 timezone:
-
+# icon
+avatar: /upload/img/icon.png
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://TokeyRoad.github.io
