@@ -3,6 +3,7 @@ title: STL算法(1)
 date: 2019-04-29 17:15:34
 categories: 
 - STL
+copyright: ture
 ---
 ## stable_sort&partial_sort&nth_element&is_sorted&is_sorted_until&merge&inplace_merge&find_if ##
 

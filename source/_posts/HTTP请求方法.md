@@ -3,6 +3,7 @@ title: HTTP请求方法
 date: 2019-03-30 21:38:16
 categories: 
 - 网络协议
+copyright: ture
 ---
 ### HTTP请求方法
 

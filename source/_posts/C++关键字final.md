@@ -3,6 +3,7 @@ title: C++关键字final
 date: 2019-04-29 11:38:01
 categories: 
 - C++
+copyright: ture
 ---
 ## C++ 11的新特性之final##
 

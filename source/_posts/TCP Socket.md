@@ -3,6 +3,7 @@ title: TCP Socket
 date: 2019-04-21 23:37:00
 categories: 
 - 网络协议
+copyright: ture
 ---
 一个简单的TCP socket通讯的实例。
 
