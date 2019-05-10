@@ -128,7 +128,7 @@ scheme: Pisces
 # Value before `||` delimeter is the target permalink.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, globe icon will be loaded.
 social:
-  GitHub: https://TokeyRoad.github.io || github
+  GitHub: https://github.com/TokeyRoad?tab=repositories || github
   #E-Mail: mailto:yourname@gmail.com || envelope
   Google: http://www.google.cn/ || google
   #Twitter: https://twitter.com/yourname || twitter
