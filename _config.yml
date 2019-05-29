@@ -3,15 +3,15 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 轩中听雨
-subtitle: TokeyRoad
-description: TokeyRoad
-keywords: Road
+title: TokeyRoad
+subtitle: Never underestimate your power to change yourself!
+# description: Never underestimate your power to change yourself!
+# keywords: Road
 author: Tokey
 language: zh-Hans
 timezone:
 # icon
-avatar: /upload/img/icon.png
+# avatar: /upload/img/icon.png
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://TokeyRoad.github.io
@@ -85,4 +85,4 @@ deploy:
 
 # Extensions
 ## Plugins: http://hexo.io/plugins/
-plugins: hexo-generate-feed
+  plugins: hexo-generate-feed
