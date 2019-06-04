@@ -24,6 +24,7 @@ typedef struct intset {
 	int8_t contents[];
 } intset;
 ```
+<!--more-->
 
 `contents` 数组是整数集合的底层实现：整数集合的每个元素都是 `contents`数组的一个数组项（item），各个项在数组中按值的大小从小到大有序的排列，并且数组中不包含任何重复项。
 
