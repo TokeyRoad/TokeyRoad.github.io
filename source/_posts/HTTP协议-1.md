@@ -1,6 +1,8 @@
 ---
 title: HTTP协议(1)
 date: 2019-03-28 21:56:48
+tags:
+  - HTTP
 categories: 
 - 网络协议
 copyright: ture

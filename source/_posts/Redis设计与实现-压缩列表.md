@@ -1,6 +1,9 @@
 ---
 title: Redis设计与实现(压缩列表)
 date: 2019-06-21 15:02:29
+tags:
+  - Redis
+  - 压缩列表
 categories: 
 - Redis设计与实现
 copyright: true

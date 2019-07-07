@@ -1,6 +1,9 @@
 ---
 title: const用法总结
 date: 2019-07-01 10:32:27
+tags:
+  - C++
+  - Const
 categories: 
 - C++
 copyright: true

@@ -1,6 +1,8 @@
 ---
 title: HTTP请求方法
 date: 2019-03-30 21:38:16
+tags:
+  - HTTP
 categories: 
 - 网络协议
 copyright: ture
