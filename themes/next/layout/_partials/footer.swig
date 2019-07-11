@@ -23,6 +23,7 @@
   {% endif %}
 </div>
 -->
+<!--
 {% if theme.footer.counter %}
     <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <div></div>
@@ -32,6 +33,8 @@
     <span class="post-meta-divider">|</span>
  
 {% endif %}
+
+-->
 
 <!--
 {% if theme.footer.powered %}
