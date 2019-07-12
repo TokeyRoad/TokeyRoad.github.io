@@ -1,6 +1,9 @@
 ---
 title: Redis设计与实现-跳跃表
 date: 2019-05-21 10:32:27
+tags:
+  - Redis
+  - 跳跃表
 categories: 
 - Redis设计与实现
 copyright: true

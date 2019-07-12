@@ -1,6 +1,9 @@
 ---
 title: Redis设计与实现-链表
 date: 2019-05-13 15:17:00
+tags:
+  - Redis
+  - 链表
 categories: 
 - Redis设计与实现
 copyright: true

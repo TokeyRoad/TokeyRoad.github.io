@@ -1,6 +1,9 @@
 ---
 title: Redis设计与实现(整数集合)
 date: 2019-06-04 09:38:45
+tags:
+  - Redis
+  - 整数集合
 categories: 
 - Redis设计与实现
 copyright: true

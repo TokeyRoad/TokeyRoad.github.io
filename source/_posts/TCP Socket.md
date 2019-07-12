@@ -1,6 +1,8 @@
 ---
 title: TCP Socket
 date: 2019-04-21 23:37:00
+tags:
+  - TCP
 categories: 
 - 网络协议
 copyright: ture

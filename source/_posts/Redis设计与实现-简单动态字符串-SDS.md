@@ -1,6 +1,9 @@
 ---
 title: Redis设计与实现--简单动态字符串(SDS)
 date: 2019-05-11 09:44:24
+tags:
+  - Redis
+  - SDS
 categories: 
 - Redis设计与实现
 copyright: true
