@@ -96,4 +96,4 @@
 <!-- 页面点击小红心 -->
 <script type="text/javascript" src="/js/src/clicklove.js"></script>
 <!-- 雪花特效 -->
-<script type="text/javascript" src="/js/src/snow.js"></script>
+<!-- <script type="text/javascript" src="/js/src/snow.js"></script> -->
