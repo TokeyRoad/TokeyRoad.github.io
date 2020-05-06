@@ -49,7 +49,10 @@ footer:
   # visitors count
   counter: true
   # Icon between year and copyright info.
-  icon: user
+  icon: heart
+  animated: true #图标是否闪动
+  # Change the color of icon, using Hex Code.
+  color: "#808080" #图标颜色
 
   # If not defined, will be used `author` from Hexo main config.
   copyright:
