@@ -80,8 +80,11 @@ stylus:
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/TokeyRoad/TokeyRoad.github.io.git
-  branch: master
+  repo: 
+    aliyun: git@59.110.233.210:/home/git/blog.git,master
+    # github: https://github.com/TokeyRoad/TokeyRoad.github.io.git,master
+  #branch: master
+    # aliyun: git@59.110.233.210:/home/git/blog.git,master
 
 # Extensions
 ## Plugins: http://hexo.io/plugins/
