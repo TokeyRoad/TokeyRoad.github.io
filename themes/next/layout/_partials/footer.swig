@@ -38,3 +38,8 @@
   <div class="powered-by"></div>
   <span class="post-count">博客全站共{{ totalcount(site) }}字</span>
 </div>
+<div class=BbeiAn-info">
+  {{ __('苏ICP备') }} -
+  <a href="http://www.beian.miit.gov.cn/">20024031号</a>
+  </a>
+</div>
