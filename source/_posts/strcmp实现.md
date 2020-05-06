@@ -39,6 +39,27 @@ int strcmp(const char* str1, const char* str2){
 }
 ```
 
+自己用减法实现
+
+```C++
+int strcmpNew2(const char* str1, const char* str2) {
+	int ret = 0;
+	while (!(ret = *(unsigned char*)str1 - *(unsigned char*)str2) && *str1) {
+		str1++;
+		str2++;
+	}
+	return ret;
+    
+	//if (ret < 0){
+	//	return -1;
+	//}
+	//else if (ret > 0){
+	//	return 1;
+	//}
+	//return 0;
+}
+```
+
 ##### 注意
 
 这个函数体内没有判断参数为NULL时的情况，所以当传入NULL时程序会崩溃，<string>中的strcmp也会崩溃
