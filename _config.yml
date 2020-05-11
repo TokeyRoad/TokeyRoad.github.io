@@ -81,8 +81,7 @@ stylus:
 deploy:
   type: git
   repo: 
-    aliyun: git@59.110.233.210:/home/git/blog.git,master
-    # github: https://github.com/TokeyRoad/TokeyRoad.github.io.git,master
+     github: https://github.com/TokeyRoad/TokeyRoad.github.io.git,master
   #branch: master
     # aliyun: git@59.110.233.210:/home/git/blog.git,master
 
