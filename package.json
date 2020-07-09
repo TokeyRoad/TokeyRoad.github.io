@@ -24,10 +24,10 @@
     "hexo-server": "^0.3.3",
     "hexo-tag-cloud": "^2.1.2",
     "hexo-wordcount": "^6.0.1",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.14.0",
     "live2d-widget-model-wanko": "^1.0.5",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lodash.merge": "^4.6.2",
-    "package-lock": "^1.0.3"
+    "package-lock": "^1.0.4"
   }
 }
