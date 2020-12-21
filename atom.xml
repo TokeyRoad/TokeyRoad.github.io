@@ -47,9 +47,9 @@
     <link href="http://TokeyRoad.github.io/2020/11/22/%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F%E4%B9%8B%E5%90%8Ehexo%E5%8D%9A%E5%AE%A2%E6%81%A2%E5%A4%8D/"/>
     <id>http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/</id>
     <published>2020-11-22T13:57:11.000Z</published>
-    <updated>2020-11-22T14:04:25.825Z</updated>
+    <updated>2020-12-21T08:03:12.611Z</updated>
     
-    <content type="html"><![CDATA[<h3 id="1-安装node-js和git"><a href="#1-安装node-js和git" class="headerlink" title="1.安装node.js和git"></a>1.安装node.js和git</h3><p>这个不用多说，直接下载安装就行了。</p><h3 id="2-配置-git-个人信息，生成新的-ssh-密钥："><a href="#2-配置-git-个人信息，生成新的-ssh-密钥：" class="headerlink" title="2.配置 git 个人信息，生成新的 ssh 密钥："></a>2.配置 git 个人信息，生成新的 ssh 密钥：</h3><p>git config –global user.name “xxxxxx”<br> git config –global user.email “xxxxxx”<br> ssh-keygen -t rsa -C “xxxxxxxx(邮箱)”</p><h3 id="3-添加公钥"><a href="#3-添加公钥" class="headerlink" title="3.添加公钥"></a>3.添加公钥</h3><p>在用户文件夹.ssh 文件里面把公钥复制出来粘贴到github个人设置的ssh位置。</p><h3 id="4-安装hexo"><a href="#4-安装hexo" class="headerlink" title="4.安装hexo"></a>4.安装hexo</h3><p> npm install hexo-cli -g</p><h3 id="5-删除博客文件夹文件，保留部分"><a href="#5-删除博客文件夹文件，保留部分" class="headerlink" title="5.删除博客文件夹文件，保留部分"></a>5.删除博客文件夹文件，保留部分</h3><p>打开原来的博客文件夹,只需保留_config.yml，theme/，source/，scaffolds/，package.json，.gitignore 这些项目，删除其他的文件。</p><h3 id="6-git-bush"><a href="#6-git-bush" class="headerlink" title="6.git bush"></a>6.git bush</h3><p>在本文件夹下git bush,运行npm install</p><h3 id="7-安装部署插件"><a href="#7-安装部署插件" class="headerlink" title="7.安装部署插件"></a>7.安装部署插件</h3><p>npm install hexo-deployer-git –save</p><h3 id="8-测试"><a href="#8-测试" class="headerlink" title="8.测试"></a>8.测试</h3><p>此时就可以hexo g &amp;&amp; hexo d 测试是否成功了。</p>]]></content>
+    <content type="html"><![CDATA[<h3 id="1-安装node-js和git"><a href="#1-安装node-js和git" class="headerlink" title="1.安装node.js和git"></a>1.安装node.js和git</h3><p>这个不用多说，直接下载安装就行了。</p><h3 id="2-配置-git-个人信息，生成新的-ssh-密钥："><a href="#2-配置-git-个人信息，生成新的-ssh-密钥：" class="headerlink" title="2.配置 git 个人信息，生成新的 ssh 密钥："></a>2.配置 git 个人信息，生成新的 ssh 密钥：</h3><p>git config –global user.name “xxxxxx”<br> git config –global user.email “xxxxxx”<br> ssh-keygen -t rsa -C “xxxxxxxx(邮箱)”</p><h3 id="3-添加公钥"><a href="#3-添加公钥" class="headerlink" title="3.添加公钥"></a>3.添加公钥</h3><p>在用户文件夹.ssh 文件里面把公钥复制出来粘贴到github个人设置的ssh位置。</p><h3 id="4-安装hexo"><a href="#4-安装hexo" class="headerlink" title="4.安装hexo"></a>4.安装hexo</h3><p> npm install hexo-cli -g</p><h3 id="5-删除博客文件夹文件，保留部分"><a href="#5-删除博客文件夹文件，保留部分" class="headerlink" title="5.删除博客文件夹文件，保留部分"></a>5.删除博客文件夹文件，保留部分</h3><p>必须拷贝文件：<br> ├──_config.yml<br> ├── theme<br> ├── scaffolds #文章模板<br> ├── package.json #说明使用哪些包<br> ├── .gitignore #限定在提交的时候哪些文件可以忽略<br> └── source</p><p>（1）讨论下哪些文件是必须拷贝的：首先是之前自己修改的文件，像站点配置_config.yml，theme文件夹里面的主题，以及source里面自己写的博客文件，这些肯定要拷贝的。除此之外，还有三个文件需要有，就是scaffolds文件夹（文章的模板）、package.json（说明使用哪些包）和.gitignore（限定在提交的时候哪些文件可以忽略）。其实，这三个文件不是我们修改的，所以即使丢失了，也没有关系，我们可以建立一个新的文件夹，然后在里面执行hexo init，就会生成这三个文件，我们只需要将它们拷贝过来使用即可。总结：_config.yml，theme/，source/，scaffolds/，package.json，.gitignore，是需要拷贝的。</p><p>（2）再讨论下哪些文件是不必拷贝的，或者说可以删除的：首先是.git文件，无论是在站点根目录下，还是主题目录下的.git文件，都可以删掉。然后是文件夹node_modules（在用npm install会重新生成），public（这个在用hexo g时会重新生成），.deploy_git文件夹（在使用hexo d时也会重新生成），db.json文件。其实上面这些文件也就是是.gitignore文件里面记载的可以忽略的内容。总结：.git/，node_modules/，public/，.deploy_git/，db.json文件需要删除。</p><h3 id="6-git-bash"><a href="#6-git-bash" class="headerlink" title="6.git bash"></a>6.git bash</h3><p>在本文件夹下git bash,运行npm install</p><h3 id="7-安装部署插件-可选"><a href="#7-安装部署插件-可选" class="headerlink" title="7.安装部署插件(可选)"></a>7.安装部署插件(可选)</h3><p>npm install hexo-deployer-git –save</p><h3 id="8-测试"><a href="#8-测试" class="headerlink" title="8.测试"></a>8.测试</h3><p>此时就可以hexo g &amp;&amp; hexo d 测试是否成功了。</p>]]></content>
     
     <summary type="html">
     
@@ -63,9 +63,9 @@
       <category term="环境配置" scheme="http://TokeyRoad.github.io/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"/>
     
     
-      <category term="git" scheme="http://TokeyRoad.github.io/tags/git/"/>
-    
       <category term="hexo" scheme="http://TokeyRoad.github.io/tags/hexo/"/>
+    
+      <category term="git" scheme="http://TokeyRoad.github.io/tags/git/"/>
     
   </entry>
   
