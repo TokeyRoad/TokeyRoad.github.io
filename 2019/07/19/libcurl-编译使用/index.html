@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/goldwood.gif?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/goldwood.gif?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="libcurl,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷） 一、引言cURL、libcurl 还有 curl，他们究竟是什么？ 也就是说，我们需要去了解下 libcurl 及其相关的概念。 二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T可能对于新人来说，就连 cURL、libcurl 和 curl 的概念都是分不清楚的。这不怪我们">
+<meta name="keywords" content="libcurl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="libcurl 编译使用">
+<meta property="og:url" content="http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/index.html">
+<meta property="og:site_name" content="TokeyRoad">
+<meta property="og:description" content="工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷） 一、引言cURL、libcurl 还有 curl，他们究竟是什么？ 也就是说，我们需要去了解下 libcurl 及其相关的概念。 二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T可能对于新人来说，就连 cURL、libcurl 和 curl 的概念都是分不清楚的。这不怪我们">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_1.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_2.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_3.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_4.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_5.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_6.png">
+<meta property="og:updated_time" content="2019-07-19T09:12:25.607Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="libcurl 编译使用">
+<meta name="twitter:description" content="工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷） 一、引言cURL、libcurl 还有 curl，他们究竟是什么？ 也就是说，我们需要去了解下 libcurl 及其相关的概念。 二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T可能对于新人来说，就连 cURL、libcurl 和 curl 的概念都是分不清楚的。这不怪我们">
+<meta name="twitter:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/">
+
+
+
+
+
+  <title>libcurl 编译使用 | TokeyRoad</title>
+  
+
+
+
+
+
+
+
+
+</head>
+<!-- 样式一（鼠标点击更换样式） -->
+<!-- <script src="https://g.joyinshare.com/hc/ribbon.min.js" type="text/javascript"></script> -->
+<!-- 样式二（飘动的彩带） -->
+<!-- <script src="https://g.joyinshare.com/hc/piao.js" type="text/javascript"></script> -->
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://TokeyRoad.github.io" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#70B7FD; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TokeyRoad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Never underestimate your power to change yourself!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tokey">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/goldwood.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TokeyRoad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">libcurl 编译使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-19T16:20:30+08:00">
+                2019-07-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/环境配置/" itemprop="url" rel="index">
+                    <span itemprop="name">环境配置</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷）</p>
+<h4 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h4><p>cURL、libcurl 还有 curl，他们究竟是什么？</p>
+<p>也就是说，我们需要去了解下 libcurl 及其相关的概念。</p>
+<h4 id="二、cURL、libcurl-还有-curl-傻傻分不清楚-T-T"><a href="#二、cURL、libcurl-还有-curl-傻傻分不清楚-T-T" class="headerlink" title="二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T"></a>二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T</h4><p>可能对于新人来说，就连 cURL、libcurl 和 curl 的概念都是分不清楚的。这不怪我们，确实关于这一点，官方网站都没有说的很清楚，但是在源代码中的 FAQ 文档中却说的非常明白。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">What is cURL? </span><br><span class="line">cURL is the name of the project. The name is a play on ‘Client for URLs’, originally with URL spelled in uppercase to make it obvious it deals with URLs. The fact ti can also be pronounced ‘see URL’ alse helped, it works as an abbreviation for “Client URL Request Library” or why not the recursive version: “Curl URL Request Library”.</span><br></pre></td></tr></table></figure>
+<p>简而言之，cURL 是一个项目的名称。是 Client for URLs、see URL、Client URL Request Library 或者 Curl URL Request Library 的缩写，也就是一个客户端 URL 请求库的项目。</p>
+<p>那么什么是 libcurl 呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">The cURL project produces two products: </span><br><span class="line">libcurl </span><br><span class="line">A free and easy-to-use client-side URL transfer library. </span><br><span class="line">… </span><br><span class="line">curl </span><br><span class="line">A command line tool for getting or sending files using URL syntax.</span><br></pre></td></tr></table></figure>
+<p>上面这段话很清晰的表现出了 cURL 与 libcurl 以及 curl 的关系，也就是说：</p>
+<p>cURL 这个项目包含了 libcurl 和 curl 两个产品。<br>其中，libcurl 是一个客户端的 URL 支持库；而 curl 就是一个使用了 libcurl 库写出来的命令行工具，其可以使用 URL 标识来请求或者发送文件。</p>
+<p>也就是说，如果我们想要编写代码来控制有关网络的行为的话，我们就需要使用到 libcurl 库而不是 curl 命令行工具；而如果我们想要直接调用 curl 命令行工具来完成一些操作，比如将其嵌入到脚本代码中去，那么这个时候，我们才会用到 curl 命令行工具。</p>
+<p>现在搞清楚了一些必要的概念，以及一些有趣的题外话，现在让我们来看看，我们要在 Unix 环境和 Windows 环境下编译和使用 libcurl，我们需要哪些东西，以及我们能在哪些地方获取到这些东西。</p>
+<h4 id="三、资料的获取"><a href="#三、资料的获取" class="headerlink" title="三、资料的获取"></a>三、资料的获取</h4><p>我们想要了解 libcurl 这个库，最直接的资源获取来源当然是官方网站： </p>
+<p><a href="https://curl.haxx.se/" target="_blank" rel="noopener">curl官网</a></p>
+<p>可能对于新手来说，一点开就会觉得有些迷茫，因为可能分不清楚 curl 和 libcurl 的区别。这也是为什么我一定要在介绍资料来源之前介绍 cURL、libcurl 和 curl 三者的区别的原因。相信在我上一节花了那么大篇幅来介绍这三者的区别之后，你应该不会那么迷茫了。 </p>
+<p>对于我们开发者来说，了解 libcurl 应该是最重要的。因为我们是想要使用 libcurl 库来编写代码的，而不是来学习 curl 的使用方法的。</p>
+<p>通过多次尝试的我最后发现，下载 Source Archives 也就是源代码的版本，是最好的。原因嘛，当你下载下来之后，解压到本地看看里面的内容你就知道了，因为它，实在是太完善了： </p>
+<p>简单的说几个：</p>
+<ol>
+<li><p>docs 文件夹<br>这里面有丰富的说明文档以及 libcurl 的运行示例代码。<br>有关 cURL、libcurl 以及 curl 的概念的定义，就是在这个文件夹下的 FAQ 文件里面。后面将要讲述的在 Unix 下编译使用 libcurl 库的内容，也是来源于这个文件夹下的 INSTALL.md 文件。除此之外，这个文件夹下还有很多说明文档，有待大家去探索去发现去思考去使用。<br>这个文件夹下的 examples 文件夹下，有着丰富的示例代码，其中的 https.c 就是本篇博客的测试运行代码。</p>
+</li>
+<li><p>winbuild 文件夹<br>这个文件夹介绍了如何使用 Visual Studio 编译 libcurl 的方法。基于 Windows 环境的编译与使用就是参考的这个文件夹下的 BUILD.WINDOWS.txt 文件中的内容。<br>并且这个文件夹下提供了编译的配置信息文件，大大方便了我们在 Windows 下使用 Visual Studio 编译 libcurl 的工作。</p>
+</li>
+<li><p>configure<br>这个脚本文件用于在 Unix 下配置 libcurl 的安装信息，用来之后安装 libcurl 环境使用。</p>
+</li>
+</ol>
+<p>等等等等，curl 的源代码文件中，包含了很多很多东西。有很多你可能接触不到，我们可以在学习中在使用中慢慢去发掘去使用。</p>
+<h4 id="四、libcurl-在-Unix-环境下的编译"><a href="#四、libcurl-在-Unix-环境下的编译" class="headerlink" title="四、libcurl 在 Unix 环境下的编译"></a>四、libcurl 在 Unix 环境下的编译</h4><p>让我们步入正题吧，libcurl 在 Unix 环境下怎么编译与使用呢？</p>
+<p>这个问题在 curl-7.61.0\docs 下的 INSTALL.md 文件中讲述的非常清晰：</p>
+<blockquote>
+<p>A normal Unix installation is made in three or four steps (after you’ve unpacked the source archive):<br>./configure<br>make<br>make test (optional) </p>
+<p>make install</p>
+</blockquote>
+<p>也就是说，在类 Unix 环境下，我们都可以在源代码文件目录下使用以下四句指令完成 libcurl 库的安装与编译：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./configure</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make <span class="built_in">test</span> (optional)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br></pre></td></tr></table></figure>
+<p>其中第三步，也就是测试那步是非常耗时间的，为了节约时间可以省略。<br>另外第四步，可能会涉及到权限问题，如果出现这个问题，需要切换到 root 权限安装。</p>
+<p>简单总结下步骤吧：</p>
+<ol>
+<li><p>使用 WinSCP 以及类似的工具，将下载下来的源代码文件放置到指定目录下，比如我现在将下载下来的 curl-7.61.0.zip 文件放到了 RedHat 7.2 环境中的 /home/wangying/libcurl 文件夹下</p>
+</li>
+<li><p>解压上一步放置的源代码文件</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ unzip curl<span class="number">-7.61</span><span class="number">.0</span>.zip</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压完成后进入 curl-7.61.0 文件夹下，运行上述所说的 4 条指令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./configure</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make <span class="built_in">test</span> (optional)</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br></pre></td></tr></table></figure>
+<p>建议大家省去第三步，因为实在太耗费时间了（T_T）。</p>
+</li>
+<li><p>执行完了之后，现在直接运行 curl 还是会显示系统默认自带的版本。我们需要进入到默认安装的目录下 <code>/usr/local/bin</code> 中使用下列命令运行：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="string">./curl</span> <span class="params">--version</span></span><br><span class="line">$ <span class="string">./curl-config</span> <span class="params">--version</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="/2019/07/19/libcurl-编译使用/libcurl_1.png" alt="libcurl_1"></p>
+<p>上述两行代码会输出 curl 以及 curl-config 两个工具的版本信息，与你下载的版本一致即为安装成功。根据我的试验经验，一旦你运行了上述两行代码，系统自动会记录下来这两个工具的路径，不过为了确保系统找得到这两个工具，你可以单独设置下环境变量。</p>
+<ol start="5">
+<li><p>libcurl 库的相关头文件与库文件所在地方，可以通过下列命令查看（这会在下一节中的使用中提到）</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl-<span class="built_in">config</span> <span class="comment">--cflags</span></span><br><span class="line">$ curl-<span class="built_in">config</span> <span class="comment">--libs</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="/2019/07/19/libcurl-编译使用/libcurl_2.png" alt="libcurl_2"></p>
+<p>其中 –cflags 输出的我们编写代码时需要包含的头文件路径， –libs 输出的是我们编写代码时需要包含的库文件路径，我们只需要将上述两行简单的添加到编译指令中即可运行我们的示例代码。</p>
+<h4 id="五、libcurl-在-Unix-环境下的使用"><a href="#五、libcurl-在-Unix-环境下的使用" class="headerlink" title="五、libcurl 在 Unix 环境下的使用"></a>五、libcurl 在 Unix 环境下的使用</h4><p>让我们点开源代码 docs 目录下的 examples 文件夹，其中的 README 文件详细介绍了 libcurl 示例代码的使用方式：</p>
+<blockquote>
+<p>Most examples should build fine using a command line like this:<br>$ curl-config –cc –cflags –libs -o example example.c<br>Some compilers don’t like having the arguments in this order but instead want you do reorganize them like: </p>
+<p>$ <code>curl-config --cc</code> -o example example.c <code>curl-config --cflags --libs</code></p>
+</blockquote>
+<p>也就是说，只要我们在上一步中成功安装了 curl 以及 curl-config 工具，在这一步中，我们只需要简单的运行这行指令即可自动的指定代码的包含头文件以及库文件信息：</p>
+<blockquote>
+<p>$ <code>curl-config --cc</code> -o example example.c <code>curl-config --cflags --libs</code></p>
+</blockquote>
+<p>让我们来尝试下 examples 中的 https.c 文件的编译（因为 https.c 文件可以在源代码中看到，这里就不再详细展示文件内容）：</p>
+<blockquote>
+<p>$ <code>curl-config --cc</code> -o https https.c <code>curl-config --cflags --libs</code></p>
+</blockquote>
+<p><img src="/2019/07/19/libcurl-编译使用/libcurl_3.png" alt="libcurl_3"></p>
+<p>可见，https.c 的运行是非常成功的，成功返回了获取的 html 信息。</p>
+<p>同样的示例我在 Ubuntu 18.04上运行通过，相信在类 Unix 上应该都是没有问题的。</p>
+<h4 id="六、libcurl-在-Windows-环境下的编译"><a href="#六、libcurl-在-Windows-环境下的编译" class="headerlink" title="六、libcurl 在 Windows 环境下的编译"></a>六、libcurl 在 Windows 环境下的编译</h4><p>libcurl 在 Windows 环境下的编译，在源代码文件夹下的 docs 文件夹下的 INSTALL 文件中有所提及，但是讲述的稍微有些晦涩难懂。欣喜的是源代码根目录下直接提供了一个 winbuilds 文件夹方便我们完成在 Windows 环境下的编译工作。</p>
+<p>这里，让我们看看 winbuild 文件夹下的 BUILD.WINDOWS.txt 文件的内容（这个文件中的内容非常详尽，这里不再粘贴出来）。</p>
+<p>我简单总结下步骤：</p>
+<ol>
+<li>运行 Developer Command Prompt for VS 工具 </li>
+</ol>
+<ol start="2">
+<li><p>进入到源代码文件夹下的 winbuild 目录下</p>
+</li>
+<li><p>运行下列指令：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmake /f Makefile.vc <span class="attribute">mode</span>=&lt;static <span class="keyword">or</span> dll&gt; &lt;options&gt;</span><br></pre></td></tr></table></figure>
+<p>其中的 mode= 后面填写 static 是编译静态库， dll 是动态库；另外 options 的填写说明如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">where &lt;options&gt; is one or many of:</span><br><span class="line">  VC=&lt;6,7,8,9,10,11,12,14,15&gt;    - VC versions</span><br><span class="line">  WITH_DEVEL=&lt;path&gt;              - Paths for the development files (SSL, zlib, etc.)</span><br><span class="line">                                   Defaults to sibbling directory deps: ../deps</span><br><span class="line">                                   Libraries can be fetched at http://windows.php.net/downloads/php-sdk/deps/</span><br><span class="line">                                   Uncompress them into the deps folder.</span><br><span class="line">  WITH_SSL=&lt;dll or static&gt;       - Enable OpenSSL support, DLL or static</span><br><span class="line">  WITH_NGHTTP2=&lt;dll or static&gt;   - Enable HTTP/2 support, DLL or static</span><br><span class="line">  WITH_MBEDTLS=&lt;dll or static&gt;   - Enable mbedTLS support, DLL or static</span><br><span class="line">  WITH_CARES=&lt;dll or static&gt;     - Enable c-ares support, DLL or static</span><br><span class="line">  WITH_ZLIB=&lt;dll or static&gt;      - Enable zlib support, DLL or static</span><br><span class="line">  WITH_SSH2=&lt;dll or static&gt;      - Enable libSSH2 support, DLL or static</span><br><span class="line">  ENABLE_SSPI=&lt;yes or no&gt;        - Enable SSPI support, defaults to yes</span><br><span class="line">  ENABLE_IPV6=&lt;yes or no&gt;        - Enable IPv6, defaults to yes</span><br><span class="line">  ENABLE_IDN=&lt;yes or no&gt;         - Enable use of Windows IDN APIs, defaults to yes</span><br><span class="line">                                   Requires Windows Vista or later</span><br><span class="line">  ENABLE_WINSSL=&lt;yes or no&gt;      - Enable native Windows SSL support, defaults to yes</span><br><span class="line">  GEN_PDB=&lt;yes or no&gt;            - Generate Program Database (debug symbols for release build)</span><br><span class="line">  DEBUG=&lt;yes or no&gt;              - Debug builds</span><br><span class="line">  MACHINE=&lt;x86 or x64&gt;           - Target architecture (default is x86)</span><br><span class="line">  CARES_PATH=&lt;path to cares&gt;     - Custom path for c-ares</span><br><span class="line">  MBEDTLS_PATH=&lt;path to mbedTLS&gt; - Custom path for mbedTLS</span><br><span class="line">  NGHTTP2_PATH=&lt;path to HTTP/2&gt;  - Custom path for nghttp2</span><br><span class="line">  SSH2_PATH=&lt;path to libSSH2&gt;    - Custom path for libSSH2</span><br><span class="line">  SSL_PATH=&lt;path to OpenSSL&gt;     - Custom path for OpenSSL</span><br><span class="line">  ZLIB_PATH=&lt;path to zlib&gt;       - Custom path for zlib</span><br></pre></td></tr></table></figure>
+<p>大家可根据需要填写，这里我填写的命令是：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmake /f Makefile.vc <span class="attribute">mode</span>=static</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>待编译完成，进入源代码文件夹下，其中多出来了一个 builds 文件夹，其中名字长度最短的那个点击进去，可以看到 bin、include 和 lib 子文件夹，其中 bin 中就是编译出来的 curl 命令行工具，include 就是我们在编写代码中需要包含的头文件，lib 就是我们在编写代码中需要包含的静态库文件（不过仍然需要 CRT 静态库的另外链接） </p>
+</li>
+</ol>
+<p>至此，使用 Visual Studio 2017 编译工具静态编译 libcurl 库的工作就算是完成了。这里值得注意的是，Windows 平台下的编译选项有很多，我们可以根据需要配置自己想要的 libcurl 库。比如静态动态，比如使用 VC 12 13 14 15 版本等等等等。</p>
+<p>在这篇博客里，主要展示了使用静态库的方式。接下来，我们来看看如何使用刚刚编译出来的这些文件进行示例代码的运行使用。</p>
+<h4 id="七、libcurl-在-Windows-环境下的使用"><a href="#七、libcurl-在-Windows-环境下的使用" class="headerlink" title="七、libcurl 在 Windows 环境下的使用"></a>七、libcurl 在 Windows 环境下的使用</h4><p>这里，我简单总结下步骤：</p>
+<ol>
+<li><p>使用 Visual Studio 2017 新建一个 Visual C++ 的空项目，并将示例代码 https.c 拷贝到项目中去</p>
+</li>
+<li><p>为了使得我们的 https.c 代码运行后控制台不会一闪而过，我们需要修改 https.c 的代码，不多，只需要添加两行即可：</p>
+</li>
+</ol>
+<p>// 添加在 include 的地方</p>
+<p>#include &lt;stdlib.h&gt;<br>// 添加在 return 语句之前<br>system(“pause”);</p>
+<p>这样，就可以使得控制台窗口运行完代码逻辑之后暂停，不至于关闭掉窗口了。</p>
+<ol start="3">
+<li>将上一节中生成的 include 文件夹以及 lib 文件夹拷贝到项目中去 </li>
+</ol>
+<ol start="4">
+<li><p>配置 VC++ 目录：需要让代码能够找到需要包含的头文件和静态库文件<br> 包含目录添加：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// <span class="variable">$(SolutionDir)</span> 是当前的解决方案目录</span><br><span class="line"><span class="variable">$(SolutionDir)</span><span class="keyword">include</span></span><br></pre></td></tr></table></figure>
+<p>库目录添加：</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// $(SolutionDir) 是当前的解决方案目录</span></span><br><span class="line"><span class="symbol">$</span>(SolutionDir)lib</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/07/19/libcurl-编译使用/libcurl_4.png" alt="libcurl_4"></p>
+</li>
+</ol>
+<ol start="5">
+<li><p>配置需要链接的静态库文件 链接器-&gt;输入-&gt;附加依赖项</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">libcurl_a.lib</span><br><span class="line">Ws2_32.lib</span><br><span class="line">Wldap32.lib</span><br><span class="line">winmm.lib</span><br><span class="line">Crypt32.lib</span><br><span class="line">Normaliz.lib</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/07/19/libcurl-编译使用/libcurl_5.png" alt="libcurl_5"></p>
+</li>
+</ol>
+<ol start="6">
+<li>修改预处理器定义：</li>
+</ol>
+<p>C/C++ -&gt; 预处理器 -&gt; 预处理器定义</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加 </span></span><br><span class="line">CURL_STATICLIB;</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li><p>编译运行，顺利的话能够看到结果如下 </p>
+<p><img src="/2019/07/19/libcurl-编译使用/libcurl_6.png" alt="libcurl_6"></p>
+</li>
+</ol>
+<p>至此，完结撒花，^_^</p>
+
+      
+    </div>
+    
+    
+    
+    <div>
+          
+            
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/07/19/libcurl-编译使用/">libcurl 编译使用</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
+  <p><span>发布时间:</span>2019年07月19日 - 16:07</p>
+  <p><span>最后更新:</span>2019年07月19日 - 17:07</p>
+  <p><span>原始链接:</span><a href="/2019/07/19/libcurl-编译使用/" title="libcurl 编译使用">http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+          
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/libcurl/" rel="tag"># libcurl</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/Redis设计与实现-列表对象/" rel="next" title="Redis设计与实现(列表对象)">
+                <i class="fa fa-chevron-left"></i> Redis设计与实现(列表对象)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/12/C++关键字-1/" rel="prev" title="深入学习C++关键字">
+                深入学习C++关键字 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/goldwood.gif" alt="Tokey">
+            
+              <p class="site-author-name" itemprop="name">Tokey</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+                <div id="myCanvasContainer" class="widget tagcloud">
+                    <canvas width="250" height="250" id="resCanvas" style="width=100%">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Const/">Const</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Final/">Final</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/">Redis</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDS/">SDS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/STL/">STL</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/args/">args</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic/">atomic</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/condition-variable/">condition_variable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/construct/">construct</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/foreach/">foreach</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/libcurl/">libcurl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mutex/">mutex</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/override/">override</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unique-ptr/">unique_ptr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vector/">vector</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/关键字/">关键字</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存分配/">内存分配</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/列表对象/">列表对象</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/压缩列表/">压缩列表</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆/">堆</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/字符串对象/">字符串对象</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/指针和引用/">指针和引用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/整数集合/">整数集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/栈/">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跳跃表/">跳跃表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">1</span></li></ul>
+                    </canvas>
+                </div>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/TokeyRoad?tab=repositories" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.google.cn/" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://cocofe.cn/" title="Hacker" target="_blank">Hacker</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、引言"><span class="nav-number">1.</span> <span class="nav-text">一、引言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、cURL、libcurl-还有-curl-傻傻分不清楚-T-T"><span class="nav-number">2.</span> <span class="nav-text">二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、资料的获取"><span class="nav-number">3.</span> <span class="nav-text">三、资料的获取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、libcurl-在-Unix-环境下的编译"><span class="nav-number">4.</span> <span class="nav-text">四、libcurl 在 Unix 环境下的编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#五、libcurl-在-Unix-环境下的使用"><span class="nav-number">5.</span> <span class="nav-text">五、libcurl 在 Unix 环境下的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#六、libcurl-在-Windows-环境下的编译"><span class="nav-number">6.</span> <span class="nav-text">六、libcurl 在 Windows 环境下的编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#七、libcurl-在-Windows-环境下的使用"><span class="nav-number">7.</span> <span class="nav-text">七、libcurl 在 Windows 环境下的使用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <span>本站已运行<span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2019,03,19,14,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+"年"+diffDays+"天"+diffHours+"小时"+diffMinutes+"分钟"+diffSeconds+"秒";
+  }, 1000);
+</script>
+<br>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-secret" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tokey</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共37.8k字</span>
+</div>
+<div class="BbeiAn-info"">
+  <a href="http://www.beian.miit.gov.cn/">苏ICP备-20024031号</a>
+  
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":250,"height":500},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<!-- 雪花特效 -->
+<!-- <script type="text/javascript" src="/js/src/snow.js"></script> -->

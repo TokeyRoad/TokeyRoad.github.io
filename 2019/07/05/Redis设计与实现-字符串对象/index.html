@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/goldwood.gif?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/goldwood.gif?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Redis,字符串对象,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Redis的键值对都是由对象来表示的，即每次创建一个新的键值对时，我们会至少创建两个对象，一个对象用作键（键对象），另一个用作值（值对象）。 Redis的每一个对象都是由一个 redisObject 结构表示，该结构中和保存数据有关的三个属性分别是 type、encoding、ptr 属性: 12345678typedef struct redisObject&amp;#123;    //类型    u">
+<meta name="keywords" content="Redis,字符串对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis设计与实现(字符串对象)">
+<meta property="og:url" content="http://TokeyRoad.github.io/2019/07/05/Redis设计与实现-字符串对象/index.html">
+<meta property="og:site_name" content="TokeyRoad">
+<meta property="og:description" content="Redis的键值对都是由对象来表示的，即每次创建一个新的键值对时，我们会至少创建两个对象，一个对象用作键（键对象），另一个用作值（值对象）。 Redis的每一个对象都是由一个 redisObject 结构表示，该结构中和保存数据有关的三个属性分别是 type、encoding、ptr 属性: 12345678typedef struct redisObject&amp;#123;    //类型    u">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-15T09:20:46.658Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis设计与实现(字符串对象)">
+<meta name="twitter:description" content="Redis的键值对都是由对象来表示的，即每次创建一个新的键值对时，我们会至少创建两个对象，一个对象用作键（键对象），另一个用作值（值对象）。 Redis的每一个对象都是由一个 redisObject 结构表示，该结构中和保存数据有关的三个属性分别是 type、encoding、ptr 属性: 12345678typedef struct redisObject&amp;#123;    //类型    u">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://TokeyRoad.github.io/2019/07/05/Redis设计与实现-字符串对象/">
+
+
+
+
+
+  <title>Redis设计与实现(字符串对象) | TokeyRoad</title>
+  
+
+
+
+
+
+
+
+
+</head>
+<!-- 样式一（鼠标点击更换样式） -->
+<!-- <script src="https://g.joyinshare.com/hc/ribbon.min.js" type="text/javascript"></script> -->
+<!-- 样式二（飘动的彩带） -->
+<!-- <script src="https://g.joyinshare.com/hc/piao.js" type="text/javascript"></script> -->
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://TokeyRoad.github.io" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#70B7FD; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TokeyRoad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Never underestimate your power to change yourself!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2019/07/05/Redis设计与实现-字符串对象/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tokey">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/goldwood.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TokeyRoad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis设计与实现(字符串对象)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-05T09:50:42+08:00">
+                2019-07-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis设计与实现/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis设计与实现</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Redis的键值对都是由对象来表示的，即每次创建一个新的键值对时，我们会至少创建两个对象，一个对象用作键（键对象），另一个用作值（值对象）。</p>
+<p>Redis的每一个对象都是由一个 <code>redisObject</code> 结构表示，该结构中和保存数据有关的三个属性分别是 <code>type</code>、<code>encoding</code>、<code>ptr</code> 属性:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span>&#123;</span></span><br><span class="line">    <span class="comment">//类型</span></span><br><span class="line">    <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">    <span class="comment">//编码</span></span><br><span class="line">    <span class="keyword">unsigned</span> encoding:<span class="number">4</span>;</span><br><span class="line">    <span class="comment">//指向底层实现数据结构的指针</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">&#125;robj;</span><br></pre></td></tr></table></figure>
+<h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><p>对象的 <code>type</code> 属性记录了对象的类型，属性值对应的常量如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型常量</th>
+<th>对象的名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REDIS_STRING</code></td>
+<td>字符串对象</td>
+</tr>
+<tr>
+<td><code>REDIS_LIST</code></td>
+<td>列表对象</td>
+</tr>
+<tr>
+<td><code>REDIS_HASH</code></td>
+<td>哈希对象</td>
+</tr>
+<tr>
+<td><code>REDIS_SET</code></td>
+<td>集合对象</td>
+</tr>
+<tr>
+<td><code>REDIS_ZSET</code></td>
+<td>有序集合对象</td>
+</tr>
+</tbody>
+</table>
+<p>对于Redis数据库保存的键值对，键总是一个字符串对象，而值则可以是字符串对象、列表对象、哈希对象、集合对象或者有序集合对象的其中一种，因此：</p>
+<ul>
+<li>当称呼一个数据库键为 “字符串键”时，我们指的是“这个数据库键所对应的值为字符串对象”；</li>
+<li>当称呼一个键为“列表键”时，我们指的是“这个数据库键所对应的值为列表对象”。</li>
+</ul>
+<p>所以当我们队一个数据库键执行 <code>TYPE</code> 命令时，命令返回的结果为数据库键对应的值对象的类型，而不是键对象的类型；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 键为字符串对象，值为字符串对象</span><br><span class="line">redis&gt; SET msg &quot;hello world&quot;</span><br><span class="line">OK</span><br><span class="line">redis&gt; TYPE msg</span><br><span class="line">string</span><br><span class="line"># 键为字符串对象，值为列表对象</span><br><span class="line">redis&gt; RPUSH numbers 1 3 5</span><br><span class="line">(integer) 6</span><br><span class="line">redis&gt; TYPE numbers</span><br><span class="line">list</span><br></pre></td></tr></table></figure>
+<p>下表为不同类型值对象的TYPE命令输出：</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>对象 <code>type</code> 属性的值</th>
+<th>TYPE命令的输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>字符串对象</td>
+<td><code>REDIS_STRING</code></td>
+<td>“string”</td>
+</tr>
+<tr>
+<td>列表对象</td>
+<td><code>REDIS_LIST</code></td>
+<td>“list”</td>
+</tr>
+<tr>
+<td>哈希对象</td>
+<td><code>REDIS_HASH</code></td>
+<td>“hash”</td>
+</tr>
+<tr>
+<td>集合对象</td>
+<td><code>REDIS_SET</code></td>
+<td>“set“</td>
+</tr>
+<tr>
+<td>有序集合对象</td>
+<td><code>REDIS_ZSET</code></td>
+<td>“zset”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="编码和底层实现"><a href="#编码和底层实现" class="headerlink" title="编码和底层实现"></a>编码和底层实现</h3><p>对象的 <code>ptr</code> 指针指向对象的底层实现数据结构，而这些数据结构由对象的 <code>encoding</code> 属性决定。</p>
+<p><code>encoding</code> 属性记录了对象所使用的编码，也即是说这个对象使用了什么数据结构作为对象的底层实现，这个属性的值在下表中列出：</p>
+<table>
+<thead>
+<tr>
+<th>编码常量</th>
+<th>编码所对应的底层数据结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REDIS_ENCODING_INT</code></td>
+<td><code>long</code> 类型的整数</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_EMBSTR</code></td>
+<td><code>embstr</code> 编码的简单动态字符串</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_RAW</code></td>
+<td>简单动态字符串</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_HT</code></td>
+<td>字典</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_LINKEDLIST</code></td>
+<td>双端链表</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_ZIPLIST</code></td>
+<td>压缩列表</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_INTSET</code></td>
+<td>整数集合</td>
+</tr>
+<tr>
+<td><code>REDIS_ENCODING_SKIPLIST</code></td>
+<td>跳跃表和字典</td>
+</tr>
+</tbody>
+</table>
+<p>每种类型的对象都至少使用了两种不同的编码，下表列出了每种类型的对象可以使用的编码。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>编码</th>
+<th>对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REDIS_STRING</code></td>
+<td><code>REDIS_ENCODING_INT</code></td>
+<td>使用整数值实现的字符串对象</td>
+</tr>
+<tr>
+<td></td>
+<td><code>REDIS_ENCODING_EMBSTR</code></td>
+<td>使用 <code>embstr</code> 编码的简单动态字符串实现的字符串对象</td>
+</tr>
+<tr>
+<td></td>
+<td><code>REDIS_ENCODING_RAW</code></td>
+<td>使用简单动态字符串实现的字符串对象</td>
+</tr>
+<tr>
+<td><code>REDIS_LIST</code></td>
+<td><code>REDIS_ENCODING_ZIPLIST</code></td>
+<td>使用压缩列表实现的列表对象</td>
+</tr>
+<tr>
+<td></td>
+<td><code>REDIS_ENCODING_LINKEDLIST</code></td>
+<td>使用双端链表实现的哈希对象</td>
+</tr>
+<tr>
+<td><code>REDIS_HASH</code></td>
+<td><code>REDIS_ENCODING_ZIPLIST</code></td>
+<td>使用压缩列表实现的哈希对象</td>
+</tr>
+<tr>
+<td></td>
+<td><code>REDIS_ENCODING_HT</code></td>
+<td>使用字典实现的哈希对象</td>
+</tr>
+<tr>
+<td><code>REDIS_SET</code></td>
+<td><code>REDIS_ENCODING_INTSET</code></td>
+<td>使用整数集合实现的集合对象</td>
+</tr>
+<tr>
+<td></td>
+<td><code>REDIS_ENCODING_HT</code></td>
+<td>使用字典实现的集合对象</td>
+</tr>
+<tr>
+<td><code>REDIS_ZSET</code></td>
+<td><code>REDIS_ENCODING_ZIPLIST</code></td>
+<td>使用压缩列表实现的有序集合对象</td>
+</tr>
+<tr>
+<td></td>
+<td><code>REDIS_ENCODING_SKIPLIST</code></td>
+<td>使用跳跃表和字典实现的有序集合对象</td>
+</tr>
+</tbody>
+</table>
+<p>使用OBJECT ENCODING 命令可以查看一个数据库键的值对象的编码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SET msg &quot;hello wrold&quot;</span><br><span class="line">OK</span><br><span class="line">redis&gt; OBJECT ENCODING msg</span><br><span class="line">&quot;embstr&quot;</span><br><span class="line">redis&gt; SET story &quot;long long long long long long ago ...&quot;</span><br><span class="line">OK</span><br><span class="line">redis&gt; OBJECT ENCODING story</span><br><span class="line">&quot;raw&quot;</span><br></pre></td></tr></table></figure>
+<p>OBJECT ENCODING对不同编码的输出:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">对象所使用的底层数据结构</th>
+<th style="text-align:left">编码常量</th>
+<th style="text-align:left">OBJECT ENCODING 命令输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">整数</td>
+<td style="text-align:left"><code>REDIS_ENCODING_INT</code></td>
+<td style="text-align:left"><code>&quot;int&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>embstr</code> 编码的简单动态字符串（SDS）</td>
+<td style="text-align:left"><code>REDIS_ENCODING_EMBSTR</code></td>
+<td style="text-align:left"><code>&quot;embstr&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left">简单动态字符串</td>
+<td style="text-align:left"><code>REDIS_ENCODING_RAW</code></td>
+<td style="text-align:left"><code>&quot;raw&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left">字典</td>
+<td style="text-align:left"><code>REDIS_ENCODING_HT</code></td>
+<td style="text-align:left"><code>&quot;hashtable&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left">双端链表</td>
+<td style="text-align:left"><code>REDIS_ENCODING_LINKEDLIST</code></td>
+<td style="text-align:left"><code>&quot;linkedlist&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left">压缩列表</td>
+<td style="text-align:left"><code>REDIS_ENCODING_ZIPLIST</code></td>
+<td style="text-align:left"><code>&quot;ziplist&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left">整数集合</td>
+<td style="text-align:left"><code>REDIS_ENCODING_INTSET</code></td>
+<td style="text-align:left"><code>&quot;intset&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left">跳跃表和字典</td>
+<td style="text-align:left"><code>REDIS_ENCODING_SKIPLIST</code></td>
+<td style="text-align:left"><code>&quot;skiplist&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p>通过 <code>encoding</code>属性来设定对象所使用的编码，而不是为特定类型的对象关联一种固定的编码，极大的提升了Redis的灵活性和效率，因为Redis可以根据不同的使用场景来为一个对象设置不同的编码，从而优化对象在某场景下的使用效率。</p>
+<p>举个例子：</p>
+<p>在列表对象包含的元素比较少时，Redis使用压缩列表作为列表对象的底层实现：</p>
+<ul>
+<li>因为压缩列表比双端链表更节约内存，并且在元素数量较少时，在内存中以连续块方式保存的压缩列表比起双端链表可以更快的被载入到缓存中；</li>
+<li>随着列表对象包含的元素越来越多，使用压缩列表来保存元素的优势逐渐消失时，对象就会将以底层实现从压缩列表转向功能更强，也更适合保存大量元素的双端链表上面；</li>
+</ul>
+<h3 id="字符串对象"><a href="#字符串对象" class="headerlink" title="字符串对象"></a>字符串对象</h3><p>字符串对象的编码可以是 <code>int</code> 、<code>raw</code> 、<code>embstr</code> 。</p>
+<ul>
+<li>如果一个字符串对象保存的是整数值，并且这个整数值可以用 <code>long</code> 类型表示，那么字符串对象会将整数值保存在字符串对象结构的 <code>ptr</code> 属性里面（<code>void*</code> -&gt; <code>long</code>），并将字符串对象的编码设置为 <code>int</code>。</li>
+<li>如果字符串对象保存的是字符串值，并且这个字符串的长度大于 <code>39</code> 字节，那么字符串对象将会使用一个简单动态字符串（SDS）来保存这个字符串值，并将对象的编码设置为 <code>raw</code>。</li>
+<li>如果字符串对象保存的是一个字符串值，并且这个字符串值的长度小于等于 <code>39</code> 字节，那么字符串对象将使用 <code>embstr</code> 编码的方式来保存这个字符串值。</li>
+</ul>
+<p><code>embstr</code> 编码是专门用于保存短字符串的一种优化编码方式，这种编码和 <code>raw</code> 编码一样，都使用 <code>redisObject</code> 结构和 <code>sdshdr</code> 结构来表示字符串对象，但 <code>raw</code>编码会调用两次内存分配函数来分别创建 <code>redisObject</code>结构和 <code>sdshrd</code> 结构，而 <code>embstr</code> 编码则通过调用一次内存分配函数来分配一块连续的空间，空间中依次包含 <code>redisObject</code> 和 <code>sdshdr</code> 结构。</p>
+<p><code>embstr</code> 编码的字符串对象在执行时，产生的效果和 <code>raw</code> 编码的字符串对象执行命令时产生的效果是相同的，但使用 <code>embstr</code> 编码的字符串对象来保存短字符串值有以下好处:</p>
+<ol>
+<li><code>embstr</code> 编码将创建字符串对象所需的内存分配次数从 <code>raw</code> 编码的两次降低为一次。</li>
+<li>释放 <code>embstr</code> 编码的字符串对象只需要调用一次内存释放函数，而释放 <code>raw</code> 变啊的字符串对象需要调用两次内存释放函数。</li>
+<li>因为 <code>embstr</code> 编码的字符串对象的所有数据都保存在一块连续的内存里面，所以这种编码的字符串对象比起 <code>raw</code> 编码的字符串对象能更好地利用缓存带来的优势。</li>
+</ol>
+<p>可以用 <code>long double</code> 类型表示的浮点数在Redis中也是作为字符串值来保存的：如果保存一个浮点数到字符串对象里，那么程序会先将这个浮点数转换成字符串值，然后再保存起转换所得的字符串值。</p>
+<p>在有需要的时候，程序会把保存在字符串对象里的字符串值转换为浮点数，执行某些操作，执行之后把所得的浮点数值转换为字符串值，继续保存在字符串对象里。（主要是体现在某些运算命令上（+-*/））</p>
+<p>下表为字符串对象保存各类型值的编码方式：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>编码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>long</code> 类型保存的整数</td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>long doube</code> 类型保存的浮点数</td>
+<td><code>embstr</code> 或 <code>raw</code></td>
+</tr>
+<tr>
+<td>字符串值，或因为长度太大而无法用 <code>long</code> 类型表示的整数，或太大无法用 <code>long double</code> 类型表示的浮点数。</td>
+<td><code>embstr</code> 或者 <code>raw</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="编码的转换"><a href="#编码的转换" class="headerlink" title="编码的转换"></a>编码的转换</h4><p><code>int</code> 编码的字符串对象和 <code>embstr</code> 编码的字符串对象在条件满足的情况下，会被转换为 <code>raw</code> 编码的字符串对象。</p>
+<p>对于 <code>int</code> 编码的字符串对象，如果我们向对象执行了一些命令，使得这个对象保存的不再是整数值，而是一个字符串值，那么字符串对象的编码将从 <code>int</code> 变为 <code>raw</code></p>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SET number 10086</span><br><span class="line">OK</span><br><span class="line">redis&gt; OBJECT ENCODING number</span><br><span class="line">&quot;int&quot;</span><br><span class="line">redis&gt; APPEND number &quot; is a good number!&quot;</span><br><span class="line">(integer) 23</span><br><span class="line">redis&gt; GET number</span><br><span class="line">&quot;10086 is a good number!&quot;</span><br><span class="line">redis&gt; OBJECT ENCODING number</span><br><span class="line">&quot;raw&quot;</span><br></pre></td></tr></table></figure>
+<p>此外，Redis没有为 <code>embstr</code> 编码的字符串对象编写任何相应的修改程序（只有 <code>int</code> 编码和 <code>raw</code> 编码的字符串对象有这些程序），所以 <code>embstr</code> 编码的字符串对象实际上是只读的，当我们对 <code>embstr</code> 编码的字符串对象执行任何修改命令时，程序会先将对象的编码从 <code>embstr</code> 转换为 <code>raw</code> ，然后再执行修改命令，因此， <code>embstr</code> 编码的字符串对象在执行修改命令之后，总会变成一个 <code>raw</code> 编码的字符串对象。</p>
+<p>字符串命令的实现：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th><code>int</code>编码的实现方法</th>
+<th><code>embstr</code>编码的实现方法</th>
+<th><code>raw</code>编码的实现方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET</td>
+<td>使用 <code>int</code> 编码保存值。</td>
+<td>使用 <code>embstr</code> 编码保存值。</td>
+<td>使用 <code>raw</code> 编码保存值。</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>拷贝对象所保存的整数值，将这个拷贝转换成字符串值，然后向客户端返回这个字符串值。</td>
+<td>直接向客户端返回字符串值。</td>
+<td>直接向客户端返回字符串值。</td>
+</tr>
+<tr>
+<td>APPEND</td>
+<td>将对象转换成 <code>raw</code> 编码，然后按 <code>raw</code> 编码的方式执行此操作。</td>
+<td>将对象转换成 <code>raw</code>编码，然后按 <code>raw</code> 编码的方式执行此操作。</td>
+<td>调用 <code>sdscatlen</code> 函数，将给定欺负穿追加到现有字符串的末尾。</td>
+</tr>
+<tr>
+<td>INCRBYFLOAT</td>
+<td>取出整数值，并将其转换成 <code>long double</code> 类型的浮点数，对这个浮点数进行加法计算，然后将得出的浮点数结果保存起来。</td>
+<td>取出字符串并尝试将其转换成 <code>long double</code> 类型的浮点数，对这个浮点数进行加法计算，然后将得出的浮点数结果保存起来。如果字符串不能被转换成浮点数，那么向客户端返回一个错误。</td>
+<td>取出字符串并尝试将其转换成 <code>long double</code> 类型的浮点数，对这个浮点数进行加法计算，然后将得出的浮点数结果保存起来。如果字符串不能被转换成浮点数，那么向客户端返回一个错误。</td>
+</tr>
+<tr>
+<td>INCYBY</td>
+<td>对整数值进行加法计算，得到的计算结果会作为整数被保存起来。</td>
+<td><code>embstr</code> 编码不能执行此命令，向客户端返回一个错误。</td>
+<td><code>raw</code> 编码不能执行此命令，向客户端返回一个错误。</td>
+</tr>
+<tr>
+<td>DECRBY</td>
+<td>对整数值进行减法运算，得出的计算结果会作为整数被保存起来。</td>
+<td><code>embstr</code> 编码不能执行此命令，向客户端返回一个错误。</td>
+<td><code>raw</code> 编码不能执行此命令，向客户端返回一个错误。</td>
+</tr>
+<tr>
+<td>STRLEN</td>
+<td>拷贝对象所保存的整数值，将这个拷贝转换成字符串值，计算并返回这个字符串值的长度。</td>
+<td>调用 <code>sdslen</code> 函数，返回字符串的长度。</td>
+<td>调用 <code>sdslen</code> 函数，返回字符串的长度。</td>
+</tr>
+<tr>
+<td>SETRANGE</td>
+<td>将对象转换成 <code>raw</code> 编码，然后按 <code>raw</code> 编码的方式执行此命令。</td>
+<td>将对象转换成 <code>raw</code>编码，然后按 <code>raw</code> 编码的方式执行此命令。</td>
+<td>将字符串特定索引上的值设置为给定的字符。</td>
+</tr>
+<tr>
+<td>GETRANGE</td>
+<td>拷贝对象所保存的整数值，将这个拷贝转换成字符串值，然后取出并返回字符串指定索引上的字符。</td>
+<td>直接取出并返回字符串指定索引上的字符。</td>
+<td>直接取出并返回字符串指定索引上的字符。</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    
+    
+    
+    <div>
+          
+            
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/07/05/Redis设计与实现-字符串对象/">Redis设计与实现(字符串对象)</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
+  <p><span>发布时间:</span>2019年07月05日 - 09:07</p>
+  <p><span>最后更新:</span>2019年07月15日 - 17:07</p>
+  <p><span>原始链接:</span><a href="/2019/07/05/Redis设计与实现-字符串对象/" title="Redis设计与实现(字符串对象)">http://TokeyRoad.github.io/2019/07/05/Redis设计与实现-字符串对象/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/07/05/Redis设计与实现-字符串对象/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+          
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
+          
+            <a href="/tags/字符串对象/" rel="tag"># 字符串对象</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/01/const用法总结/" rel="next" title="const用法总结">
+                <i class="fa fa-chevron-left"></i> const用法总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/17/Redis设计与实现-列表对象/" rel="prev" title="Redis设计与实现(列表对象)">
+                Redis设计与实现(列表对象) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/goldwood.gif" alt="Tokey">
+            
+              <p class="site-author-name" itemprop="name">Tokey</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+                <div id="myCanvasContainer" class="widget tagcloud">
+                    <canvas width="250" height="250" id="resCanvas" style="width=100%">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Const/">Const</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Final/">Final</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/">Redis</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDS/">SDS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/STL/">STL</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/args/">args</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic/">atomic</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/condition-variable/">condition_variable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/construct/">construct</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/foreach/">foreach</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/libcurl/">libcurl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mutex/">mutex</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/override/">override</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unique-ptr/">unique_ptr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vector/">vector</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/关键字/">关键字</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存分配/">内存分配</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/列表对象/">列表对象</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/压缩列表/">压缩列表</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆/">堆</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/字符串对象/">字符串对象</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/指针和引用/">指针和引用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/整数集合/">整数集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/栈/">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跳跃表/">跳跃表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">1</span></li></ul>
+                    </canvas>
+                </div>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/TokeyRoad?tab=repositories" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.google.cn/" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://cocofe.cn/" title="Hacker" target="_blank">Hacker</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#类型"><span class="nav-number">1.</span> <span class="nav-text">类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编码和底层实现"><span class="nav-number">2.</span> <span class="nav-text">编码和底层实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串对象"><span class="nav-number">3.</span> <span class="nav-text">字符串对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#编码的转换"><span class="nav-number">3.1.</span> <span class="nav-text">编码的转换</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <span>本站已运行<span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2019,03,19,14,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+"年"+diffDays+"天"+diffHours+"小时"+diffMinutes+"分钟"+diffSeconds+"秒";
+  }, 1000);
+</script>
+<br>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-secret" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tokey</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共37.8k字</span>
+</div>
+<div class="BbeiAn-info"">
+  <a href="http://www.beian.miit.gov.cn/">苏ICP备-20024031号</a>
+  
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":250,"height":500},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<!-- 雪花特效 -->
+<!-- <script type="text/javascript" src="/js/src/snow.js"></script> -->

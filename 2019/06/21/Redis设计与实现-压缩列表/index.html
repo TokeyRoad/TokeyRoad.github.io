@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/goldwood.gif?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/goldwood.gif?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Redis,压缩列表,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：">
+<meta name="keywords" content="Redis,压缩列表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis设计与实现(压缩列表)">
+<meta property="og:url" content="http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/index.html">
+<meta property="og:site_name" content="TokeyRoad">
+<meta property="og:description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_2.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_3.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_4.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_5.png">
+<meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_6.png">
+<meta property="og:updated_time" content="2019-07-05T06:35:55.320Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis设计与实现(压缩列表)">
+<meta name="twitter:description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：">
+<meta name="twitter:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/">
+
+
+
+
+
+  <title>Redis设计与实现(压缩列表) | TokeyRoad</title>
+  
+
+
+
+
+
+
+
+
+</head>
+<!-- 样式一（鼠标点击更换样式） -->
+<!-- <script src="https://g.joyinshare.com/hc/ribbon.min.js" type="text/javascript"></script> -->
+<!-- 样式二（飘动的彩带） -->
+<!-- <script src="https://g.joyinshare.com/hc/piao.js" type="text/javascript"></script> -->
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://TokeyRoad.github.io" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#70B7FD; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TokeyRoad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Never underestimate your power to change yourself!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tokey">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/goldwood.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TokeyRoad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis设计与实现(压缩列表)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-21T15:02:29+08:00">
+                2019-06-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis设计与实现/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis设计与实现</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Redis为了节约内存而开发的压缩列表。</p>
+<p>由一系列特殊编码的连续内存块组成的顺序型数据结构。</p>
+<p>一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。</p>
+<h3 id="压缩列表的构成"><a href="#压缩列表的构成" class="headerlink" title="压缩列表的构成"></a>压缩列表的构成</h3><p>包含三个节点的压缩列表，如下图：</p>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png" alt="ziplist_1"><br><a id="more"></a></p>
+<h4 id="各部分详细说明"><a href="#各部分详细说明" class="headerlink" title="各部分详细说明"></a>各部分详细说明</h4><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>长度</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zlbytes</code></td>
+<td><code>uint32_t</code></td>
+<td><code>4</code> 字节</td>
+<td>记录整个压缩列表占用的内存字节数：在对压缩列表进行内存重分配，或者计算 <code>zlend</code> 的位置时使用。</td>
+</tr>
+<tr>
+<td><code>zltail</code></td>
+<td><code>uint32_t</code></td>
+<td><code>4</code> 字节</td>
+<td>记录压缩列表表尾节点距离压缩列表的起始地址有多少个字节：通过这个偏移量，程序无须遍历整个压缩列表就可以确定表尾节点的地址。</td>
+</tr>
+<tr>
+<td><code>zllen</code></td>
+<td><code>uint16_t</code></td>
+<td><code>2</code> 字节</td>
+<td>记录了压缩列表包含的节点数量：当这个属性的值小于 <code>UINT16_MAX(65535)</code> 时，这个属性的值就是压缩列表包含节点的数量；当这个值等于 <code>UINT16_MAX</code> 时，节点的真实数量需要遍历整个压缩列表才能计算得出。</td>
+</tr>
+<tr>
+<td><code>entryX</code></td>
+<td>列表节点</td>
+<td>不定</td>
+<td>压缩列表的各个节点，节点的长度由节点保存的内容决定。</td>
+</tr>
+<tr>
+<td><code>zlend</code></td>
+<td><code>uint8_t</code></td>
+<td><code>1</code> 字节</td>
+<td>特殊值 <code>0xFF</code> （十进制 <code>255</code>），用于标记压缩列表的末端。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>列表 <code>zlbytes</code> 属性的值为 <code>0x50</code> （十进制80），表示压缩列表的总长为 <code>80</code> 字节。</p>
+<p>列表 <code>zltail</code> 属性的值为 <code>0x3c</code> （十进制60），这表示如果我们有一个指向压缩列表起始地址的指针 <code>p</code>，那么只要用指针 <code>p</code> 加上偏移量 <code>60</code> ，就可以计算出表尾节点 <code>entry3</code> 的地址。</p>
+<p>列表 <code>zllen</code> 属性的值为 <code>0x3</code> （十进制3），表示压缩列表包含三个节点。</p>
+</blockquote>
+<h3 id="节点的构成"><a href="#节点的构成" class="headerlink" title="节点的构成"></a>节点的构成</h3><p>每个压缩列表节点可以保存一个字节数组或者一个整数值。</p>
+<p>其中字节数组可以是以下三种长度的其中之一：</p>
+<ol>
+<li>长度小于等于 <code>63</code>（2^6  - 1）字节的字节数组；</li>
+<li>长度小于等于 <code>16383</code>（2^14 - 1）字节的字节数组；</li>
+<li>长度小于等于 <code>4294967295</code>（2^32 - 1）字节的字节数组；</li>
+</ol>
+<p>整数值则可以是以下六种之一：</p>
+<ol>
+<li><code>4</code> 位长，介于 0 至 12 之间的无符号整数；</li>
+<li><code>1</code> 字节长的有符号整数；</li>
+<li><code>3</code> 字节长的有符号整数；</li>
+<li><code>int6_t</code> 类型整数；</li>
+<li><code>int32_t</code> 类型整数；</li>
+<li><code>int64_t</code> 类型整数。</li>
+</ol>
+<p>每个压缩列表节点都是由 <code>previous_entry_length</code>、<code>encoding</code>、<code>content</code> 三个部分组成，如下图：</p>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_2.png" alt="ziplist_2"></p>
+<h4 id="previous-entry-length"><a href="#previous-entry-length" class="headerlink" title="previous_entry_length"></a>previous_entry_length</h4><p>节点的 <code>previous_entry_length</code> 属性以字节为单位，记录里压缩列表中前一个节点的长度。</p>
+<p>属性的长度可以是 <code>1</code> 字节或者 <code>5</code> 字节：</p>
+<blockquote>
+<p>如果前一节点的长度小于 <code>254</code>字节，那么 <code>previous_entry_length</code> 属性的长度为 <code>1</code>字节，前一节点的长度就保存在这一个字节中；</p>
+<p>如果前一节点的长度大于等于 <code>254</code>字节，那么<code>previous_entry_length</code> 属性的长度为 <code>5</code>字节，其中属性中的第一个字节就会被设置为 <code>0xFE</code>（十进制 254），而之后的四个字节才是前一个节点的真正长度。</p>
+</blockquote>
+<p>因为节点的<code>previous_entry_length</code> 属性记录了前一个节点的长度，所以程序可以通过指针运算，根据当前节点的起始地址来计算出前一个节点的起始地址。</p>
+<p>压缩列表的从表尾向表头遍历操作就是使用这一原理实现的：只要我们拥有了一个指向某个节点起始地址的指针，那么通过这个指针以及这个节点的<code>previous_entry_length</code> 属性，程序就可以一直向前一个节点回溯，最终到达压缩列表的表头节点。</p>
+<p>从表尾到表头节点遍历的过程（如下图）：</p>
+<ul>
+<li>首先，我们拥有指向压缩列表表尾节点 <code>entry4</code> 起始地址的指针 <code>p1</code> （指向表尾节点的指针可以通过指向压缩列表起始地址的指针加上 <code>zltail</code> 属性的值得出）；</li>
+<li>通过用 <code>p1</code> 减去 <code>entry4</code> 节点<code>previous_entry_length</code>属性的值，我们得到一个指向 <code>entry4</code>前一节点 <code>entry3</code>起始地址的指针 <code>p2</code>；</li>
+<li>通过用 <code>p2</code> 减去 <code>entry3</code> 节点<code>previous_entry_length</code>属性的值，我们得到一个指向 <code>entry3</code>前一节点 <code>entry2</code>起始地址的指针 <code>p3</code>；</li>
+<li>通过用 <code>p3</code> 减去 <code>entry2</code> 节点<code>previous_entry_length</code>属性的值，我们得到一个指向 <code>entry2</code>前一节点 <code>entry1</code>起始地址的指针 <code>p4</code>，<code>entry1</code>为压缩列表的表头节点；</li>
+<li>最后，我们从表尾节点向表头节点遍历了整个列表。</li>
+</ul>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_3.png" alt="ziplist_3"></p>
+<h4 id="encoding"><a href="#encoding" class="headerlink" title="encoding"></a>encoding</h4><p>节点的 <code>encoding</code> 属性记录了节点的 <code>content</code>属性所保存数据的类型以及长度：</p>
+<ul>
+<li>一字节、两字节或者五字节，值得最高位为 <code>00</code>、<code>01</code>或者 <code>10</code>的是字节数组编码：这种编码表示节点的 <code>content</code> 属性保存着字节数组，数组的长度由编码除去最高两位之后的其他位记录；</li>
+<li>一字节长，值的最高位以 <code>11</code> 开头的是整数编码：这种编码表示节点的 <code>content</code>属性保存着整数值，整数值的类型和长度由编码除去最高两位之后的其他位记录；</li>
+</ul>
+<p>字节数组编码</p>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>编码长度</th>
+<th><code>content</code> 属性保存的值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>00bbbbbb</code></td>
+<td><code>1</code>字节</td>
+<td>长度小于等于 <code>63</code>字节的字节数组</td>
+</tr>
+<tr>
+<td><code>01bbbbbb xxxxxxxx</code></td>
+<td><code>2</code> 字节</td>
+<td>长度小于等于 <code>16383</code> 字节的字节数组</td>
+</tr>
+<tr>
+<td><code>10______ aaaaaaaaa bbbbbbbb cccccccc</code></td>
+<td><code>5</code> 字节</td>
+<td>长度小于等于 <code>4294967295</code> 的字节数组</td>
+</tr>
+</tbody>
+</table>
+<p>整数编码</p>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>编码长度</th>
+<th><code>content</code>属性保存的值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>11000000</code></td>
+<td><code>1</code> 字节</td>
+<td><code>int16_t</code>类型的整数</td>
+</tr>
+<tr>
+<td><code>11010000</code></td>
+<td><code>1</code> 字节</td>
+<td><code>int32_t</code>类型的整数</td>
+</tr>
+<tr>
+<td><code>11100000</code></td>
+<td><code>1</code> 字节</td>
+<td><code>int64_t</code>类型的整数</td>
+</tr>
+<tr>
+<td><code>11110000</code></td>
+<td><code>1</code>字节</td>
+<td><code>24</code>位有符号整数</td>
+</tr>
+<tr>
+<td><code>11111110</code></td>
+<td><code>1</code>字节</td>
+<td><code>8</code>位有符号整数</td>
+</tr>
+<tr>
+<td><code>1111xxxx</code></td>
+<td><code>1</code>字节</td>
+<td>使用这一编码的节点没有 <code>content</code>属性，因为编码本身的 <code>xxxx</code>四个位已经保存了一个介于 <code>0</code> 和 <code>12</code> 之间的值，所以它无须 <code>content</code> 属性</td>
+</tr>
+</tbody>
+</table>
+<h4 id="content"><a href="#content" class="headerlink" title="content"></a>content</h4><p>节点的 <code>content</code>属性 负责保存节点的值，节点值可以是一个字节数组或者整数，值的类型和长度由节点的 <code>encoding</code> 属性决定。</p>
+<p>保存字节数组的示例：</p>
+<ul>
+<li>编码的最高两位 <code>00</code> 表示节点保存的是一个字节数组；</li>
+<li>编码的后六位 <code>001011</code> 记录了字节数组的长度 <code>11</code>；</li>
+<li><code>content</code> 属性保存着节点的值 <code>hello world</code>。</li>
+</ul>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_4.png" alt="ziplist_4"></p>
+<p>保存整数值的示例：</p>
+<ul>
+<li>编码 <code>11000000</code> 表示节点保存的是一个 <code>int16_t</code>类型的整数值；</li>
+<li><code>content</code> 属性保存着节点的值 <code>10086</code>。</li>
+</ul>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_5.png" alt="ziplist_5"></p>
+<h3 id="连锁更新"><a href="#连锁更新" class="headerlink" title="连锁更新"></a>连锁更新</h3><p>前文提到每个节点的 <code>previous_entry_length</code> 属性都记录了前一节点的长度：</p>
+<ul>
+<li>如果前一节点的长度小于 <code>254</code> 字节，那么 <code>previous_entry_length</code> 属性需要用 <code>1</code> 字节长的空间来保存这个长度值。</li>
+<li>如果前一节点的长度大于等于 <code>254</code> 字节，那么  <code>previous_entry_length</code> 属性需要用 <code>5</code> 字节长的空间来保存这个长度值。</li>
+</ul>
+<p>当出现这种情况时：在一个压缩列表中，有多个连续的、长度介于 <code>250</code> 字节到 <code>253</code> 字节之间的节点 <code>e1</code> 至 <code>eN</code>；</p>
+<p>因为这连续部分节点的长度都是小于 <code>254</code>字节，所以记录这些节点的长度只需要 <code>1</code> 字节长的 <code>previous_entry_length</code>属性，这时，如果将一个长度大于等于 <code>254</code> 字节的新节点 设置为表头节点，也就是插入 <code>e1</code> 之前，那么，就比较麻烦了，因为 <code>e1</code> 的 <code>previous_entry_length</code>属性仅一个字节，没办法保存新节点的长度，这个时候就需要程序对压缩列表执行空间重分配操作，并将 <code>e1</code>节点的<code>previous_entry_length</code>属性长度从一个字节扩展到五个字节长。同时后面的节点 <code>e2</code> 也出现了同样的情况，需要扩展，然后后续节点需要依次扩展，程序就需要不断的对压缩列表进行空间重分配操作，直到能保存为止。这种情况被称为“连锁更新”。</p>
+<p>下图展示了这一过程：</p>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_6.png" alt="ziplist_6"></p>
+<p>此外，除了新增节点会出现连锁更新之外，删除节点也会出现连锁更新。</p>
+<p>连锁更新在最坏的情况下需要对压缩列表执行 <code>N</code>次空间重分配操作，而每次空间空分配的最坏复杂度是O(N)，所以连锁更新的最坏复杂度为O(N^2)。</p>
+<p>尽管连锁更新的复杂度较高，但是真正造成性能问题的几率是很低的：</p>
+<ul>
+<li>首先，压缩列表中恰好有多个连续的、长度介于 <code>250</code> 字节至 <code>253</code> 字节之间的节点，连锁更新才会被引发。</li>
+<li>其次，即使出现了连锁更新，更新的节点数量不多，就不会对性能造成任何影响。</li>
+</ul>
+<p>因此， <code>ziplistPush</code> 等命令的平均复杂度仅为 O(N)，在实际使用中，不需要担心连锁更新会影响到压缩列表的性能。</p>
+<h3 id="压缩列表所有的API"><a href="#压缩列表所有的API" class="headerlink" title="压缩列表所有的API"></a>压缩列表所有的API</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>算法复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ziplistNew</code></td>
+<td>创建一个新的压缩列表。</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>ziplistPush</code></td>
+<td>创建一个包含给定值的新节点，并将这个新节点添加到压缩列表的表头或者表尾。</td>
+<td>平均O(N)，最坏O(N^2)。</td>
+</tr>
+<tr>
+<td><code>ziplistInsert</code></td>
+<td>将包含给定值的新节点插入到给定节点之后。</td>
+<td>平均O(N)，最坏O(N^2)。</td>
+</tr>
+<tr>
+<td><code>ziplistIndex</code></td>
+<td>返回压缩列表给定索引上的节点。</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td><code>ziplistFind</code></td>
+<td>在压缩列表中查找并返回包含了给定值的节点。</td>
+<td>因为节点的值可能是一个字节数组，  所以检查节点值和给定值是否相同的复杂度为 O(N)， 而查找整个列表的复杂度则为 O(N^2 。</td>
+</tr>
+<tr>
+<td><code>ziplistNext</code></td>
+<td>返回给定节点的下一个节点。</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>ziplistPrev</code></td>
+<td>返回给定节点的前一个节点。</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>ziplistGet</code></td>
+<td>获取给定节点所保存的值。</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>ziplistDelete</code></td>
+<td>从压缩列表中删除给定的节点。</td>
+<td>平均O(N)，最坏O(N^2)。</td>
+</tr>
+<tr>
+<td><code>ziplistDeleteRange</code></td>
+<td>删除压缩列表在给定索引上的连续多个节点。</td>
+<td>平均O(N)，最坏O(N^2)。</td>
+</tr>
+<tr>
+<td><code>ziplistBlobLen</code></td>
+<td>返回压缩列表目前占用的内存字节数。</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>ziplistLen</code></td>
+<td>返回压缩列表目前包含的节点数量。</td>
+<td>节点数量小于 <code>65535</code>时 O(1)，大于 <code>65535</code>时O(N)。</td>
+</tr>
+</tbody>
+</table>
+<p>其中 <code>ziplistPush</code> 、 <code>ziplistInsert</code> 、 <code>ziplistDelete</code> 和 <code>ziplistDeleteRange</code> 四个函数都有可能会引发连锁更新， 所以它们的最坏复杂度都是 O(N^2)。</p>
+
+      
+    </div>
+    
+    
+    
+    <div>
+          
+            
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/06/21/Redis设计与实现-压缩列表/">Redis设计与实现(压缩列表)</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
+  <p><span>发布时间:</span>2019年06月21日 - 15:06</p>
+  <p><span>最后更新:</span>2019年07月05日 - 14:07</p>
+  <p><span>原始链接:</span><a href="/2019/06/21/Redis设计与实现-压缩列表/" title="Redis设计与实现(压缩列表)">http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+          
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
+          
+            <a href="/tags/压缩列表/" rel="tag"># 压缩列表</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/04/Redis设计与实现-整数集合/" rel="next" title="Redis设计与实现(整数集合)">
+                <i class="fa fa-chevron-left"></i> Redis设计与实现(整数集合)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/01/const用法总结/" rel="prev" title="const用法总结">
+                const用法总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/goldwood.gif" alt="Tokey">
+            
+              <p class="site-author-name" itemprop="name">Tokey</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+            <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+            <div class="widget-wrap">
+                <div id="myCanvasContainer" class="widget tagcloud">
+                    <canvas width="250" height="250" id="resCanvas" style="width=100%">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Const/">Const</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Final/">Final</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/">Redis</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDS/">SDS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/STL/">STL</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/args/">args</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic/">atomic</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/condition-variable/">condition_variable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/construct/">construct</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/foreach/">foreach</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/libcurl/">libcurl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mutex/">mutex</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/override/">override</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unique-ptr/">unique_ptr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vector/">vector</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/关键字/">关键字</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存分配/">内存分配</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/列表对象/">列表对象</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/压缩列表/">压缩列表</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆/">堆</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/字符串对象/">字符串对象</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/指针和引用/">指针和引用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/整数集合/">整数集合</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/栈/">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/跳跃表/">跳跃表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">1</span></li></ul>
+                    </canvas>
+                </div>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/TokeyRoad?tab=repositories" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.google.cn/" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://cocofe.cn/" title="Hacker" target="_blank">Hacker</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩列表的构成"><span class="nav-number">1.</span> <span class="nav-text">压缩列表的构成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#各部分详细说明"><span class="nav-number">1.1.</span> <span class="nav-text">各部分详细说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#节点的构成"><span class="nav-number">2.</span> <span class="nav-text">节点的构成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#previous-entry-length"><span class="nav-number">2.1.</span> <span class="nav-text">previous_entry_length</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#encoding"><span class="nav-number">2.2.</span> <span class="nav-text">encoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#content"><span class="nav-number">2.3.</span> <span class="nav-text">content</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连锁更新"><span class="nav-number">3.</span> <span class="nav-text">连锁更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩列表所有的API"><span class="nav-number">4.</span> <span class="nav-text">压缩列表所有的API</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <span>本站已运行<span id="showDays"></span></span>
+<script>
+  var seconds = 1000;
+  var minutes = seconds * 60;
+  var hours = minutes * 60;
+  var days = hours * 24;
+  var years = days * 365;
+  var birthDay = Date.UTC(2019,03,19,14,00,00); // 这里设置建站时间
+  setInterval(function() {
+    var today = new Date();
+    var todayYear = today.getFullYear();
+    var todayMonth = today.getMonth()+1;
+    var todayDate = today.getDate();
+    var todayHour = today.getHours();
+    var todayMinute = today.getMinutes();
+    var todaySecond = today.getSeconds();
+    var now = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+    var diff = now - birthDay;
+    var diffYears = Math.floor(diff/years);
+    var diffDays = Math.floor((diff/days)-diffYears*365);
+    var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+    var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+    var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+      document.getElementById('showDays').innerHTML=""+diffYears+"年"+diffDays+"天"+diffHours+"小时"+diffMinutes+"分钟"+diffSeconds+"秒";
+  }, 1000);
+</script>
+<br>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user-secret" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tokey</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共37.8k字</span>
+</div>
+<div class="BbeiAn-info"">
+  <a href="http://www.beian.miit.gov.cn/">苏ICP备-20024031号</a>
+  
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":250,"height":500},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+<!-- 雪花特效 -->
+<!-- <script type="text/javascript" src="/js/src/snow.js"></script> -->
