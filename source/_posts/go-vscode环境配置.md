@@ -25,6 +25,8 @@ copyright: true
    > -------pkg （归档文件目录）
    >
    > -------src （源码文件目录）
+   >
+   > 在用户环境变量中设置GoPath=工作目录
 
 2. CMD下配置go env
 
