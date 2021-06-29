@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="TokeyRoad">
 <meta property="og:description" content="在C++ 11新标准中新增了线程资源同步对象：std::mutex 和 std::condition_variable 。 std::mutex 系列C++ 11/14/17中提供了如下mutex系列类型：    互斥量 版本 作用     mutex C++ 11 最基本的互斥量   timed_mutex C++ 11 有超时机制的互斥量   recursive_mutex C++ 11 可重">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-05-20T06:43:30.233Z">
+<meta property="og:updated_time" content="2021-06-29T14:22:59.129Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程资源同步对象-mutex">
 <meta name="twitter:description" content="在C++ 11新标准中新增了线程资源同步对象：std::mutex 和 std::condition_variable 。 std::mutex 系列C++ 11/14/17中提供了如下mutex系列类型：    互斥量 版本 作用     mutex C++ 11 最基本的互斥量   timed_mutex C++ 11 有超时机制的互斥量   recursive_mutex C++ 11 可重">
@@ -460,6 +460,7 @@
 <p>示例：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lg(mymutex);</span><br><span class="line">	<span class="comment">//保护的资源操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>注意：mymutex的声明周期必须比函数func的作用域长。</p>
+<a id="more"></a>
 <p>错误示例：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//错误写法</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::mutex m;</span><br><span class="line">	<span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lg(mymutex);</span><br><span class="line">	<span class="comment">//保护的资源操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样写是错误的，当跳出func作用域时，m已经失效，这时lg析构解锁的时候，会出现未定义的行为。</p>
@@ -491,7 +492,7 @@
   <p><span>本文标题:</span><a href="/2020/05/20/线程资源同步对象-mutex/">线程资源同步对象-mutex</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2020年05月20日 - 09:05</p>
-  <p><span>最后更新:</span>2020年05月20日 - 14:05</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2020/05/20/线程资源同步对象-mutex/" title="线程资源同步对象-mutex">http://TokeyRoad.github.io/2020/05/20/线程资源同步对象-mutex/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2020/05/20/线程资源同步对象-mutex/" aria-label="复制成功！"></i></span>
   </p>

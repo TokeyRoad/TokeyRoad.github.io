@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="TokeyRoad">
 <meta property="og:description" content="std::vector的reserve和resize的区别   reserve：分配空间，更改capacity但不改变size。 resize：分配空间，更改capacity也改变size。   函数作用reserve是容器预留空间，不会真正的去创建数组对象，在创建对象之前，不能引用容器内的元素，当加入新元素的时候使用push_bakc()/insert()函数。 resize是改变容器大小，并且">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-04-27T07:20:13.433Z">
+<meta property="og:updated_time" content="2021-06-29T14:25:44.181Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="vector resize与reserve区别">
 <meta name="twitter:description" content="std::vector的reserve和resize的区别   reserve：分配空间，更改capacity但不改变size。 resize：分配空间，更改capacity也改变size。   函数作用reserve是容器预留空间，不会真正的去创建数组对象，在创建对象之前，不能引用容器内的元素，当加入新元素的时候使用push_bakc()/insert()函数。 resize是改变容器大小，并且">
@@ -392,6 +392,7 @@
 <p>resize是改变容器大小，并且创建对象，因此调用这个函数之后，就可以引用容器内的对象，加入新元素的时候可以使用operator[]操作符，或者引用迭代器来引用元素对象。</p>
 <h4 id="函数形式"><a href="#函数形式" class="headerlink" title="函数形式"></a>函数形式</h4><p>reserve：一个参数，即需要预留的容器的空间；</p>
 <p>resize：两个参数，第一个是容器新的大小，第二个是要加入容器中的新元素，如果这个参数被省略，                那么就调用元素对象的默认构造函数。</p>
+<a id="more"></a>
 <h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span> vec;</span><br><span class="line"><span class="comment">/*****reserve*****/</span></span><br><span class="line">vec.reserve(<span class="number">10</span>);<span class="comment">//新元素还没有构造</span></span><br><span class="line"><span class="comment">//此时不能用[]访问元素</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">	vec.push_back(i);<span class="comment">//新元素这时才构造</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*****resize****/</span></span><br><span class="line">vec.resize(<span class="number">12</span>);</span><br><span class="line">vec[<span class="number">10</span>] = <span class="number">1</span>;<span class="comment">//直接操作新元素</span></span><br><span class="line">vec[<span class="number">11</span>] = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
 <p>vector在内存中是连续分布的，所以设计的时候会在所有元素外预留一部分空间，否则每次新增元素都需要重新分配，那么效率将会很低。</p>
 <p>假如vector中存在1000个元素，两种做法：</p>
@@ -435,7 +436,7 @@
   <p><span>本文标题:</span><a href="/2020/04/27/vector-resize与reserve区别/">vector resize与reserve区别</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2020年04月27日 - 14:04</p>
-  <p><span>最后更新:</span>2020年04月27日 - 15:04</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2020/04/27/vector-resize与reserve区别/" title="vector resize与reserve区别">http://TokeyRoad.github.io/2020/04/27/vector-resize与reserve区别/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2020/04/27/vector-resize与reserve区别/" aria-label="复制成功！"></i></span>
   </p>

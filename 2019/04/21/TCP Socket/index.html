@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="一个简单的TCP socket通讯的实例。 功能简单说明：服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。">
+<meta name="description" content="一个简单的TCP socket通讯的实例。 功能简单说明：服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。 一.服务端  创建套接字 123456WORD sockVersion = MAKEWORD(2,">
 <meta name="keywords" content="TCP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP Socket">
 <meta property="og:url" content="http://TokeyRoad.github.io/2019/04/21/TCP Socket/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="一个简单的TCP socket通讯的实例。 功能简单说明：服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。">
+<meta property="og:description" content="一个简单的TCP socket通讯的实例。 功能简单说明：服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。 一.服务端  创建套接字 123456WORD sockVersion = MAKEWORD(2,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-12T07:16:11.330Z">
+<meta property="og:updated_time" content="2021-06-29T14:25:57.713Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TCP Socket">
-<meta name="twitter:description" content="一个简单的TCP socket通讯的实例。 功能简单说明：服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。">
+<meta name="twitter:description" content="一个简单的TCP socket通讯的实例。 功能简单说明：服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。 一.服务端  创建套接字 123456WORD sockVersion = MAKEWORD(2,">
 
 
 
@@ -382,7 +382,7 @@
 
       
         <p>一个简单的TCP socket通讯的实例。</p>
-<p>功能简单说明：<br>服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。<br>其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。<br>    <a id="more"></a></p>
+<p>功能简单说明：<br>服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。<br>其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。</p>
 <p><strong>一.服务端</strong></p>
 <ol>
 <li><p>创建套接字</p>
@@ -392,6 +392,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建并初始化socket</span></span><br><span class="line">SOCKET listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);</span><br><span class="line"><span class="keyword">if</span> (listen_socket == INVALID_SOCKET) &#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"socket init error code:%d"</span>, WSAGetLastError());</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//绑定结构</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">sin</span>;</span></span><br><span class="line"><span class="built_in">sin</span>.sin_family = AF_INET;</span><br><span class="line"><span class="built_in">sin</span>.sin_port = htons(<span class="number">6666</span>);</span><br><span class="line"><span class="built_in">sin</span>.sin_addr.S_un.S_addr = INADDR_ANY;</span><br><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="keyword">if</span> (bind(listen_socket, (LPSOCKADDR)&amp;<span class="built_in">sin</span>, <span class="keyword">sizeof</span>(<span class="built_in">sin</span>)) != <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"bind socket error code:%d"</span>, WSAGetLastError());</span><br><span class="line">	closesocket(listen_socket);<span class="comment">//注意socket回收</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>监听端口</p>
+<a id="more"></a>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//int listen( int sockfd, int backlog);</span></span><br><span class="line"><span class="comment">//sockfd：用于标识一个已捆绑未连接套接口的描述字。</span></span><br><span class="line"><span class="comment">//backlog：等待连接队列的最大长度。</span></span><br><span class="line"><span class="keyword">if</span> (listen(listen_socket, <span class="number">5</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"listen socket error code:%d"</span>, WSAGetLastError());</span><br><span class="line">	closesocket(listen_socket);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>等待客户端连接，每连接一个可以创建一个对应的套接字和线程去处理对应的消息</p>
@@ -434,7 +435,7 @@
   <p><span>本文标题:</span><a href="/2019/04/21/TCP Socket/">TCP Socket</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年04月21日 - 23:04</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/04/21/TCP Socket/" title="TCP Socket">http://TokeyRoad.github.io/2019/04/21/TCP Socket/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/04/21/TCP Socket/" aria-label="复制成功！"></i></span>
   </p>

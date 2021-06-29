@@ -556,7 +556,16 @@
       
         
           <p>一个简单的TCP socket通讯的实例。</p>
-<p>功能简单说明：<br>服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。<br>其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。<br></p>
+<p>功能简单说明：<br>服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。<br>其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。</p>
+<p><strong>一.服务端</strong></p>
+<ol>
+<li><p>创建套接字</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WORD sockVersion = MAKEWORD(<span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">WSADATA wsaData;</span><br><span class="line"><span class="keyword">if</span> (WSAStartup(sockVersion, &amp;wsaData) != <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//WSA(Windows Sockets Asynchronous，Windows异步套接字)的启动命令</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>绑定套接字到IP和端口</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建并初始化socket</span></span><br><span class="line">SOCKET listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);</span><br><span class="line"><span class="keyword">if</span> (listen_socket == INVALID_SOCKET) &#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"socket init error code:%d"</span>, WSAGetLastError());</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//绑定结构</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">sin</span>;</span></span><br><span class="line"><span class="built_in">sin</span>.sin_family = AF_INET;</span><br><span class="line"><span class="built_in">sin</span>.sin_port = htons(<span class="number">6666</span>);</span><br><span class="line"><span class="built_in">sin</span>.sin_addr.S_un.S_addr = INADDR_ANY;</span><br><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="keyword">if</span> (bind(listen_socket, (LPSOCKADDR)&amp;<span class="built_in">sin</span>, <span class="keyword">sizeof</span>(<span class="built_in">sin</span>)) != <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"bind socket error code:%d"</span>, WSAGetLastError());</span><br><span class="line">	closesocket(listen_socket);<span class="comment">//注意socket回收</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>监听端口</p></li></ol>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/04/21/TCP Socket/#more" rel="contents">
@@ -735,17 +744,23 @@
 
       
         
-          <h3 id="HTTP请求方法"><a href="#HTTP请求方法" class="headerlink" title="HTTP请求方法"></a>HTTP请求方法</h3><p>​    常用的HTTP请求方式为GET/POST。</p>
+          
+            <h3 id="HTTP请求方法"><a href="#HTTP请求方法" class="headerlink" title="HTTP请求方法"></a>HTTP请求方法</h3><p>​    常用的HTTP请求方式为GET/POST。</p>
 <p>​    根据HTTP标准，HTTP有以下多种请求方式：</p>
 <p>​    HTTP1.0定义了三种请求方法：GET、POST和HEAD方法。</p>
-<p>​    HTTP1.1新增了五种请求方法：OPTIONS、PUT、DELETE、TRACE和CONNECT方法。<br></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/03/30/HTTP请求方法/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+<p>​    HTTP1.1新增了五种请求方法：OPTIONS、PUT、DELETE、TRACE和CONNECT方法。</p>
+<ol>
+<li>GET：请求指定的页面信息，并返回实体主体。</li>
+<li>HEAD：类似于GET请求，只不过返回的响应中没有具体的内容，只是用于获取报头。</li>
+<li>POST：向指定资源提交数据进行处理请求，数据被包含在请求体中。POST请求可能会导致新的资源的生成或者已有资源的修改。（多用于表单提交）</li>
+<li>PUT：从客户端向服务器传送的数据取代指定的文档的内容。</li>
+<li>DELETE：请求服务器删除指定的页面。</li>
+<li>CONNECT：预留给能够将连接改为管道方式的代理服务器。</li>
+<li>OPTIONS：允许客户端查看服务器的性能。</li>
+<li>TRACE：回显服务器收到的请求，主要用于测试或诊断。</li>
+</ol>
+
+          
         
       
     </div>
@@ -921,7 +936,9 @@
 <h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><p>​    HTTP协议是工作在C/S架构上的，浏览器作为HTTP客户端通过URL向HTTP服务端（WEB服务器）发送数据请求。</p>
 <p>​    常用的WEB服务器：Apache，Nginx，IIS服务器等。</p>
 <p>​    服务器接收到请求之后，向客户端响应信息即回复。</p>
-<p>​    HTTP默认端口号80，可自己在WEB服务器上修改。<br></p>
+<p>​    HTTP默认端口号80，可自己在WEB服务器上修改。</p>
+<h5 id="HTTP注意事项"><a href="#HTTP注意事项" class="headerlink" title="HTTP注意事项"></a>HTTP注意事项</h5><ol>
+<li><p>HTTP是无连接的：即每次只能处理一个请求，每次服务端收到请求之后就立马处理并回复，收到客户端的应答之后就断开连接，这样极大的减少了传输时间。</p></li></ol>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/03/28/HTTP协议-1/#more" rel="contents">
@@ -1100,7 +1117,7 @@
 
       
         
-          <p>1.基础压缩指令<br>    gzip file        压缩对应文件，源文件移除，如果是多个文件压缩，则被分别压缩，不会打包。(压缩后文件名file.gz)<br>    gunzip file.gz        解压file.gz，压缩包移除。<br>    bzip2 file (-k)    同gzip,但是压缩后的文件名file.bz2, k表示源文件保留<br>    bunzip2 file.bz2   同gunzip<br>    两者都不能压缩名录<br></p>
+          <p>1.基础压缩指令<br>    gzip file        压缩对应文件，源文件移除，如果是多个文件压缩，则被分别压缩，不会打包。(压缩后文件名file.gz)<br>    gunzip file.gz        解压file.gz，压缩包移除。<br>    bzip2 file (-k)    同gzip,但是压缩后的文件名file.bz2, k表示源文件保留<br>    bunzip2 file.bz2   同gunzip<br>    两者都不能压缩名录<br>2.高级压缩指令<br>    (1)tar<br>        参数：<br>            c – 创建  – 压缩（源文件保留）<br>            x – 释放  – 解压缩<br>            v – 显示提示信息 – 压缩解压缩 –可忽略<br>            f – 指定压缩文件的名字<br>            z – 使用gzip的方式压缩文件 –.gz(后缀)<br>            j – 使用bzip2的方式压缩文件 – .bz2<br>        压缩：<br>            tar zcvf XXX.tar.gz 需要压缩的文件<br>            tar jcvf XXX.tar.bz2 需要压缩的文件<br>        解压缩：<br>            tar jxvf XXX.tar.bz2 (-C 解压目录，默认当前)</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/03/23/压缩与解压/#more" rel="contents">

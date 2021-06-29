@@ -79,22 +79,22 @@
 
 
 
-<meta name="description" content="Redis跳跃表的实现。 用到的两个结构体redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构表示跳跃表节点，而zskiplist结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。 一个跳跃表的例子">
+<meta name="description" content="Redis跳跃表的实现。 用到的两个结构体redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构表示跳跃表节点，而zskiplist结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。 一个跳跃表的例子 其中图片最左边的是zskiplist结构,包含以下属性：  header 指向跳跃表的表头节点。  tail 指向跳跃表">
 <meta name="keywords" content="Redis,跳跃表">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis设计与实现-跳跃表">
 <meta property="og:url" content="http://TokeyRoad.github.io/2019/05/21/Redis设计与实现-跳跃表/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="Redis跳跃表的实现。 用到的两个结构体redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构表示跳跃表节点，而zskiplist结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。 一个跳跃表的例子">
+<meta property="og:description" content="Redis跳跃表的实现。 用到的两个结构体redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构表示跳跃表节点，而zskiplist结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。 一个跳跃表的例子 其中图片最左边的是zskiplist结构,包含以下属性：  header 指向跳跃表的表头节点。  tail 指向跳跃表">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/21/Redis设计与实现-跳跃表/skiplist_1.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/21/Redis设计与实现-跳跃表/skiplist_2.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/21/Redis设计与实现-跳跃表/skiplist_3.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/21/Redis设计与实现-跳跃表/skiplist_4.png">
-<meta property="og:updated_time" content="2019-07-12T07:15:28.375Z">
+<meta property="og:updated_time" content="2021-06-29T14:19:25.264Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis设计与实现-跳跃表">
-<meta name="twitter:description" content="Redis跳跃表的实现。 用到的两个结构体redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构表示跳跃表节点，而zskiplist结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。 一个跳跃表的例子">
+<meta name="twitter:description" content="Redis跳跃表的实现。 用到的两个结构体redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构表示跳跃表节点，而zskiplist结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。 一个跳跃表的例子 其中图片最左边的是zskiplist结构,包含以下属性：  header 指向跳跃表的表头节点。  tail 指向跳跃表">
 <meta name="twitter:image" content="http://tokeyroad.github.io/2019/05/21/Redis设计与实现-跳跃表/skiplist_1.png">
 
 
@@ -389,7 +389,6 @@
         <p>Redis跳跃表的实现。</p>
 <p>用到的两个结构体<code>redis.h/zskiplistNode</code>和<code>redis.h/zskiplist</code>两个结构定义，其中<code>zskiplistNode</code>结构表示跳跃表节点，而<code>zskiplist</code>结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。</p>
 <h4 id="一个跳跃表的例子"><a href="#一个跳跃表的例子" class="headerlink" title="一个跳跃表的例子"></a>一个跳跃表的例子</h4><p><img src="/2019/05/21/Redis设计与实现-跳跃表/skiplist_1.png" alt="跳跃表示例"></p>
-<a id="more"></a>
 <p>其中图片最左边的是<code>zskiplist</code>结构,包含以下属性：</p>
 <ul>
 <li><p><code>header</code> 指向跳跃表的表头节点。</p>
@@ -399,6 +398,7 @@
 <li><p><code>level</code> 记录目前跳跃表内，层数最大的那个节点的层数（表头节点的层数不计算在内）。</p>
 </li>
 <li><p><code>length</code> 记录跳跃表的长度，也就是跳跃表目前包含节点的数量（表头节点不包含在内）。</p>
+<a id="more"></a>
 </li>
 </ul>
 <p>位于 <code>zskiplist</code> 结构右边的是四个 <code>zskiplistNode</code> 结构，包含以下属性：</p>
@@ -529,7 +529,7 @@
   <p><span>本文标题:</span><a href="/2019/05/21/Redis设计与实现-跳跃表/">Redis设计与实现-跳跃表</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年05月21日 - 10:05</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/05/21/Redis设计与实现-跳跃表/" title="Redis设计与实现-跳跃表">http://TokeyRoad.github.io/2019/05/21/Redis设计与实现-跳跃表/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/05/21/Redis设计与实现-跳跃表/" aria-label="复制成功！"></i></span>
   </p>

@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="TokeyRoad">
 <meta property="og:description" content="栈现在计算机都直接在代码底层支持栈的结构，这体现在，底层有专门的寄存器指向栈所在的地址（SS，堆栈段寄存器，存放堆栈段地址）；有专门的机器指令完成这种入栈出栈的操作（push，pop）。这种机制效率较高，但支持的数据类型较少，一般是整数，浮点，指针等系统直接支持的数据类型，并不支持其他的数据结构（自定义栈）。因为这种特点，栈在程序中的使用特别频繁，对于子程序的调用，就是直接利用栈完成的，机器的c">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-12T07:16:52.314Z">
+<meta property="og:updated_time" content="2021-06-29T14:24:37.083Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="内存中堆和栈的理解">
 <meta name="twitter:description" content="栈现在计算机都直接在代码底层支持栈的结构，这体现在，底层有专门的寄存器指向栈所在的地址（SS，堆栈段寄存器，存放堆栈段地址）；有专门的机器指令完成这种入栈出栈的操作（push，pop）。这种机制效率较高，但支持的数据类型较少，一般是整数，浮点，指针等系统直接支持的数据类型，并不支持其他的数据结构（自定义栈）。因为这种特点，栈在程序中的使用特别频繁，对于子程序的调用，就是直接利用栈完成的，机器的c">
@@ -383,7 +383,9 @@
       
         <ol>
 <li>栈<br>现在计算机都直接在代码底层支持栈的结构，这体现在，底层有专门的寄存器指向栈所在的地址（SS，堆栈段寄存器，存放堆栈段地址）；有专门的机器指令完成这种入栈出栈的操作（push，pop）。<br>这种机制效率较高，但支持的数据类型较少，一般是整数，浮点，指针等系统直接支持的数据类型，并不支持其他的数据结构（自定义栈）。因为这种特点，栈在程序中的使用特别频繁，对于子程序的调用，就是直接利用栈完成的，机器的call指令中隐含了把返回地址入栈，而子程序的ret指令则是从堆栈中弹出返回地址并跳转的操作。</li>
-<li>堆<br> 堆是由函数库提供的而不是系统支持，基本malloc/calloc/realloc/free函数维护了一套内部的堆结构（在C++中则增加了new/delete维护）。</li>
+<li><p>堆</p>
+<p>堆是由函数库提供的而不是系统支持，基本malloc/calloc/realloc/free函数维护了一套内部的堆结构（在C++中则增加了new/delete维护）。</p>
+</li>
 </ol>
 
       
@@ -403,7 +405,7 @@
   <p><span>本文标题:</span><a href="/2019/03/19/内存中堆和栈的理解/">内存中堆和栈的理解</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年03月19日 - 21:03</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/03/19/内存中堆和栈的理解/" title="内存中堆和栈的理解">http://TokeyRoad.github.io/2019/03/19/内存中堆和栈的理解/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/03/19/内存中堆和栈的理解/" aria-label="复制成功！"></i></span>
   </p>
@@ -450,8 +452,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/19/内存区介绍/" rel="next" title="内存区介绍">
-                <i class="fa fa-chevron-left"></i> 内存区介绍
+              <a href="/2019/03/19/内存分配的实例分析/" rel="next" title="内存分配的实例分析">
+                <i class="fa fa-chevron-left"></i> 内存分配的实例分析
               </a>
             
           </div>

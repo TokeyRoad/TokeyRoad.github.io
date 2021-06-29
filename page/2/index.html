@@ -376,17 +376,23 @@
       
         
           
-          敏捷开发步骤:1. 用户需求分析转化为产品BACKLOG这部分主要由PM负责。
-主要内容：用户调研，需求分析，确定产品迭代功能，出具产品BACKLOG，决定产品发布日期以及发布内容，给迭代计划预设目标，并排序优先级，考虑相应的风险。
-2. Sprint计划会议生成Sprint BACKLOG这部分主
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/12/23/敏捷开发/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <h3 id="敏捷开发步骤"><a href="#敏捷开发步骤" class="headerlink" title="敏捷开发步骤:"></a>敏捷开发步骤:</h3><h4 id="1-用户需求分析转化为产品BACKLOG"><a href="#1-用户需求分析转化为产品BACKLOG" class="headerlink" title="1. 用户需求分析转化为产品BACKLOG"></a>1. 用户需求分析转化为产品BACKLOG</h4><p>这部分主要由PM负责。</p>
+<p>主要内容：用户调研，需求分析，确定产品迭代功能，出具产品BACKLOG，决定产品发布日期以及发布内容，给迭代计划预设目标，并排序优先级，考虑相应的风险。</p>
+<h4 id="2-Sprint计划会议生成Sprint-BACKLOG"><a href="#2-Sprint计划会议生成Sprint-BACKLOG" class="headerlink" title="2. Sprint计划会议生成Sprint BACKLOG"></a>2. Sprint计划会议生成Sprint BACKLOG</h4><p>这部分主要由开发经理负责。</p>
+<p>将产品BACKLOG拆分细化为Sprint BACKLOG。根据开发优先级管理Sprint BACKLOG，随时更新状态，每个团队成员可以自主挑选任务，修改Sprint BACKLOG。</p>
+<h3 id="3-迭代开发周期，每日例会，交付迭代版本"><a href="#3-迭代开发周期，每日例会，交付迭代版本" class="headerlink" title="3. 迭代开发周期，每日例会，交付迭代版本"></a>3. 迭代开发周期，每日例会，交付迭代版本</h3><p>这部分由开发团队共同推进。</p>
+<p>根据Sprint BACKLOG，开始开发工作，更新任务面板，参加每日例会，根据昨日进度，今日安排，所遇困难等快速梳理一遍面板上的工作任务，在会后对所遇困难进行讨论解决，保证整体开发进度。</p>
+<p>优先级排序：一般分为三级。</p>
+<blockquote>
+<p>Must 必须做的</p>
+<p>Should 应该做的</p>
+<p>Could 可以做的</p>
+</blockquote>
+<p>要保证Must和Should必须完成，Could尽量去完成。在完不成时需要及时沟通，变更任务状态。</p>
+<h3 id="4-验收发布版本，评审回顾会议，周期数据报表"><a href="#4-验收发布版本，评审回顾会议，周期数据报表" class="headerlink" title="4. 验收发布版本，评审回顾会议，周期数据报表"></a>4. 验收发布版本，评审回顾会议，周期数据报表</h3><p>这部分由开发团队共同完成。</p>
+<p>开发团队通过操作演示的方式展示Sprint中完成的功能与架构。PM根据产品BACKLOG，验收开发交付的迭代版本，发布产品迭代版本。后续问题反馈，改善Sprint过程。</p>
+
+          
         
       
     </div>
@@ -559,17 +565,11 @@
       
         
           
-          打开命令行，输入以下命令:
-1git config --global credential.helper store
-执行完毕会在在当前系统用户文件夹下生成一个名为.git-credentials的文件，如：C:\Users\Administrator\ .git-credentials，再次提交代
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/11/22/解决git每次推送都要输入用户名密码的方案/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p>打开命令行，输入以下命令:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
+<p>执行完毕会在在当前系统用户文件夹下生成一个名为.git-credentials的文件，如：C:\Users\Administrator\ .git-credentials，再次提交代码时，输入密码后会将用户名密码以明文的方式保存在其中。 </p>
+
+          
         
       
     </div>
@@ -741,10 +741,11 @@
 
       
         
-          
-          1.安装node.js和git这个不用多说，直接下载安装就行了。
-2.配置 git 个人信息，生成新的 ssh 密钥：git config –global user.name “xxxxxx” git config –global user.email “xxxxxx” ssh-keygen -t 
-          ...
+          <h3 id="1-安装node-js和git"><a href="#1-安装node-js和git" class="headerlink" title="1.安装node.js和git"></a>1.安装node.js和git</h3><p>这个不用多说，直接下载安装就行了。</p>
+<h3 id="2-配置-git-个人信息，生成新的-ssh-密钥："><a href="#2-配置-git-个人信息，生成新的-ssh-密钥：" class="headerlink" title="2.配置 git 个人信息，生成新的 ssh 密钥："></a>2.配置 git 个人信息，生成新的 ssh 密钥：</h3><p>git config –global user.name “xxxxxx”<br> git config –global user.email “xxxxxx”<br> ssh-keygen -t rsa -C “xxxxxxxx(邮箱)”</p>
+<h3 id="3-添加公钥"><a href="#3-添加公钥" class="headerlink" title="3.添加公钥"></a>3.添加公钥</h3><p>在用户文件夹.ssh 文件里面把公钥复制出来粘贴到github个人设置的ssh位置。</p>
+<h3 id="4-安装hexo"><a href="#4-安装hexo" class="headerlink" title="4.安装hexo"></a>4.安装hexo</h3><p> npm install hexo-cli -g</p>
+<h3 id="5-删除博客文件夹文件，保留部分"><a href="#5-删除博客文件夹文件，保留部分" class="headerlink" title="5.删除博客文件夹文件，保留部分"></a>5.删除博客文件夹文件，保留部分</h3><p>必须拷贝文件：<br> ├──_config.yml<br> ├── theme<br> ├── scaffolds #文章模板<br> ├── package.json #说明使用哪些包<br> ├── .gitignore #限定在提交的时候哪些文件可以忽略<br> └── source</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/11/22/重装系统之后hexo博客恢复/#more" rel="contents">
@@ -923,11 +924,13 @@
 
       
         
-          
-          std::auto_ptr基本用法
-12345//第一种形式std::auto_ptr&lt;int&gt; ap1(new int(1));//第二种形式std::auto_ptr&lt;int&gt; ap2;ap2.reset(new int(1));
-智能指针对象ap1和ap2均持有一个在堆
-          ...
+          <h4 id="std-auto-ptr"><a href="#std-auto-ptr" class="headerlink" title="std::auto_ptr"></a>std::auto_ptr</h4><p>基本用法</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一种形式</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap1(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">1</span>));</span><br><span class="line"><span class="comment">//第二种形式</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap2;</span><br><span class="line">ap2.reset(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<p>智能指针对象ap1和ap2均持有一个在堆上分配int对象，这两块堆内存在对象释放时得以释放。</p>
+<p>std::auto_ptr 经常误用的是复制操作，当复制auto_ptr对象时(拷贝复制或operator=复制)，原对象的堆内存会转移到复制的对象上，原指针就空了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">	<span class="built_in">std</span>::<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap1(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">1</span>));</span><br><span class="line">	<span class="comment">//拷贝复制</span></span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap2(ap1);</span><br><span class="line">	<span class="keyword">if</span> (ap1.get()!= <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap1 is not NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap1 is NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (ap2.get() != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap2 is not NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap2 is NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//operator=复制</span></span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap3(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">1</span>));</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap4 = ap3;</span><br><span class="line">	<span class="keyword">if</span> (ap3.get() != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap3 is not NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap3 is NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (ap4.get() != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap4 is not NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ap4 is NULL"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">ap1 is <span class="literal">NULL</span></span><br><span class="line">ap2 is <span class="keyword">not</span> <span class="literal">NULL</span></span><br><span class="line">ap3 is <span class="literal">NULL</span></span><br><span class="line">ap4 is <span class="keyword">not</span> <span class="literal">NULL</span></span><br></pre></td></tr></table></figure>
+<p>ap1的堆内存转移到了ap2，ap3的堆内存转移到了ap4</p>
+<p>因此在使用中，应尽量避免使用std::auto_ptr（C++11之后 该指针已被弃用，不应该再使用它）</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/29/智能指针类/#more" rel="contents">
@@ -1106,12 +1109,13 @@
 
       
         
-          
-          C++ 11 新标准中提供了对整形变量原子操作的相关库，即std::atomic,这是个模板类型：（同时支持跨平台）
-12template&lt;class T&gt;struct atomic;
-注意：
-1234567891011121314#include &lt;iostream&gt;#in
-          ...
+          <p>C++ 11 新标准中提供了对整形变量原子操作的相关库，即std::atomic,这是个模板类型：（同时支持跨平台）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">atomic</span>;</span></span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; ato_int;</span><br><span class="line">	ato_int = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//std::atomic&lt;int&gt; ato_int = 1;</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d \n"</span>, (<span class="keyword">int</span>)ato_int);</span><br><span class="line"></span><br><span class="line">	++ato_int;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d \n"</span>, (<span class="keyword">int</span>)ato_int);</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码在win和linux中都可以运行，但是如果这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//std::atomic&lt;int&gt; ato_int;</span></span><br><span class="line"><span class="comment">//ato_int = 1;</span></span><br><span class="line">   <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; ato_int = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>就只能在win下运行，linux编译无法通过。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/22/原子操作类-atomic/#more" rel="contents">

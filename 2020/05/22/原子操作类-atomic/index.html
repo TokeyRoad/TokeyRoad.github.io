@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="TokeyRoad">
 <meta property="og:description" content="C++ 11 新标准中提供了对整形变量原子操作的相关库，即std::atomic,这是个模板类型：（同时支持跨平台） 12template&amp;lt;class T&amp;gt;struct atomic; 注意： 1234567891011121314#include &amp;lt;iostream&amp;gt;#include &amp;lt;atomic&amp;gt;#include &amp;lt;stdio.h&amp;gt;int ma">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-05-23T02:59:50.146Z">
+<meta property="og:updated_time" content="2021-06-29T14:22:27.852Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="原子操作类-atomic">
 <meta name="twitter:description" content="C++ 11 新标准中提供了对整形变量原子操作的相关库，即std::atomic,这是个模板类型：（同时支持跨平台） 12template&amp;lt;class T&amp;gt;struct atomic; 注意： 1234567891011121314#include &amp;lt;iostream&amp;gt;#include &amp;lt;atomic&amp;gt;#include &amp;lt;stdio.h&amp;gt;int ma">
@@ -388,6 +388,7 @@
 <p>以上代码在win和linux中都可以运行，但是如果这样：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//std::atomic&lt;int&gt; ato_int;</span></span><br><span class="line"><span class="comment">//ato_int = 1;</span></span><br><span class="line">   <span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; ato_int = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 <p>就只能在win下运行，linux编译无法通过。</p>
+<a id="more"></a>
 <p>错误原因是std::atomic的拷贝构造函数是默认=delete 禁止编译器生成的 g++遵循了，但是win上的vc++没有遵循。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">atomic&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> atomic&amp;) = <span class="keyword">delete</span>;</span><br></pre></td></tr></table></figure>
 <table>
@@ -467,7 +468,7 @@
   <p><span>本文标题:</span><a href="/2020/05/22/原子操作类-atomic/">原子操作类-atomic</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2020年05月22日 - 11:05</p>
-  <p><span>最后更新:</span>2020年05月23日 - 10:05</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2020/05/22/原子操作类-atomic/" title="原子操作类-atomic">http://TokeyRoad.github.io/2020/05/22/原子操作类-atomic/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2020/05/22/原子操作类-atomic/" aria-label="复制成功！"></i></span>
   </p>

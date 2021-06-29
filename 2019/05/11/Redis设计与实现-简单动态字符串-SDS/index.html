@@ -88,7 +88,7 @@
 <meta property="og:description" content="近来对着文档学习一波Redis的设计与实现，一边看一边记笔记。  SDS的定义 SDS对应的结构体sds.h/sdshdr 123456789&amp;gt;struct sdshdr&amp;#123;&amp;gt;	//记录buf数组已存入的字节数&amp;gt;	//sds结构体存入的字符串的长度&amp;gt;	int len;&amp;gt;	//当前sds结构体未使用的字节数(可调整)&amp;gt;	int free;&amp;gt;	char">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/11/Redis设计与实现-简单动态字符串-SDS/sds_1.png">
-<meta property="og:updated_time" content="2019-07-12T07:14:44.008Z">
+<meta property="og:updated_time" content="2021-06-29T14:18:51.783Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis设计与实现--简单动态字符串(SDS)">
 <meta name="twitter:description" content="近来对着文档学习一波Redis的设计与实现，一边看一边记笔记。  SDS的定义 SDS对应的结构体sds.h/sdshdr 123456789&amp;gt;struct sdshdr&amp;#123;&amp;gt;	//记录buf数组已存入的字节数&amp;gt;	//sds结构体存入的字符串的长度&amp;gt;	int len;&amp;gt;	//当前sds结构体未使用的字节数(可调整)&amp;gt;	int free;&amp;gt;	char">
@@ -392,15 +392,15 @@
 </li>
 </ol>
 <blockquote>
-<a id="more"></a>
-<p>下图为SDS一个示例</p>
 </blockquote>
+<p>下图为SDS一个示例</p>
 <p><img src="/2019/05/11/Redis设计与实现-简单动态字符串-SDS/sds_1.png" alt="SDS示例"></p>
 <blockquote>
 <p><strong>free</strong>的属性值为0，表示当前SDS还有5个可用<strong>字节</strong><br><strong>len</strong>的属性值为5，表示当前SDS存入的字符串长度是5个<strong>字节</strong><br><strong>buf</strong>是个字符数组，前len个字节保存存入的字符，最后一个字节默认一直是保存空字符<strong>‘\0’</strong><br>SDS默认保存多一个空字符，这样就能沿用C的部分字符串语法，而SDS仅仅是多用了一个字节的空间</p>
 </blockquote>
 <ol start="2">
 <li><p><strong>字符串长度时间复杂度</strong></p>
+<a id="more"></a>
 <blockquote>
 <p>很显然，SDS结构获取存入字符长度的时间复杂度是O(1)，但是C的字符串是通过遍历字符串，直至遇到空字符才停止，因此C字符串的时间复杂度是O(n)，这样就保证获取字符串长度不会成为性能瓶颈。</p>
 </blockquote>
@@ -480,7 +480,7 @@
   <p><span>本文标题:</span><a href="/2019/05/11/Redis设计与实现-简单动态字符串-SDS/">Redis设计与实现--简单动态字符串(SDS)</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年05月11日 - 09:05</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/05/11/Redis设计与实现-简单动态字符串-SDS/" title="Redis设计与实现--简单动态字符串(SDS)">http://TokeyRoad.github.io/2019/05/11/Redis设计与实现-简单动态字符串-SDS/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/05/11/Redis设计与实现-简单动态字符串-SDS/" aria-label="复制成功！"></i></span>
   </p>

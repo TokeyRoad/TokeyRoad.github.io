@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_4.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_5.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/07/19/libcurl-编译使用/libcurl_6.png">
-<meta property="og:updated_time" content="2019-07-19T09:12:25.607Z">
+<meta property="og:updated_time" content="2021-06-29T14:18:37.698Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="libcurl 编译使用">
 <meta name="twitter:description" content="工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷） 一、引言cURL、libcurl 还有 curl，他们究竟是什么？ 也就是说，我们需要去了解下 libcurl 及其相关的概念。 二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T可能对于新人来说，就连 cURL、libcurl 和 curl 的概念都是分不清楚的。这不怪我们">
@@ -397,6 +397,7 @@
 <p>那么什么是 libcurl 呢？</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">The cURL project produces two products: </span><br><span class="line">libcurl </span><br><span class="line">A free and easy-to-use client-side URL transfer library. </span><br><span class="line">… </span><br><span class="line">curl </span><br><span class="line">A command line tool for getting or sending files using URL syntax.</span><br></pre></td></tr></table></figure>
 <p>上面这段话很清晰的表现出了 cURL 与 libcurl 以及 curl 的关系，也就是说：</p>
+<a id="more"></a>
 <p>cURL 这个项目包含了 libcurl 和 curl 两个产品。<br>其中，libcurl 是一个客户端的 URL 支持库；而 curl 就是一个使用了 libcurl 库写出来的命令行工具，其可以使用 URL 标识来请求或者发送文件。</p>
 <p>也就是说，如果我们想要编写代码来控制有关网络的行为的话，我们就需要使用到 libcurl 库而不是 curl 命令行工具；而如果我们想要直接调用 curl 命令行工具来完成一些操作，比如将其嵌入到脚本代码中去，那么这个时候，我们才会用到 curl 命令行工具。</p>
 <p>现在搞清楚了一些必要的概念，以及一些有趣的题外话，现在让我们来看看，我们要在 Unix 环境和 Windows 环境下编译和使用 libcurl，我们需要哪些东西，以及我们能在哪些地方获取到这些东西。</p>
@@ -541,7 +542,7 @@
   <p><span>本文标题:</span><a href="/2019/07/19/libcurl-编译使用/">libcurl 编译使用</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年07月19日 - 16:07</p>
-  <p><span>最后更新:</span>2019年07月19日 - 17:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/07/19/libcurl-编译使用/" title="libcurl 编译使用">http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/07/19/libcurl-编译使用/" aria-label="复制成功！"></i></span>
   </p>

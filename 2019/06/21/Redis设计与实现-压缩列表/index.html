@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：">
+<meta name="description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：  各部分详细说明   属性 类型 长度 用途     zlbytes uint32_t 4 字节 记录整个压缩列表占用的内存字节数：在对压缩列表进行内存重分配，或者">
 <meta name="keywords" content="Redis,压缩列表">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis设计与实现(压缩列表)">
 <meta property="og:url" content="http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：">
+<meta property="og:description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：  各部分详细说明   属性 类型 长度 用途     zlbytes uint32_t 4 字节 记录整个压缩列表占用的内存字节数：在对压缩列表进行内存重分配，或者">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_2.png">
@@ -93,10 +93,10 @@
 <meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_4.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_5.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_6.png">
-<meta property="og:updated_time" content="2019-07-05T06:35:55.320Z">
+<meta property="og:updated_time" content="2021-06-29T14:19:34.234Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis设计与实现(压缩列表)">
-<meta name="twitter:description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：">
+<meta name="twitter:description" content="Redis为了节约内存而开发的压缩列表。 由一系列特殊编码的连续内存块组成的顺序型数据结构。 一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。 压缩列表的构成包含三个节点的压缩列表，如下图：  各部分详细说明   属性 类型 长度 用途     zlbytes uint32_t 4 字节 记录整个压缩列表占用的内存字节数：在对压缩列表进行内存重分配，或者">
 <meta name="twitter:image" content="http://tokeyroad.github.io/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png">
 
 
@@ -392,7 +392,7 @@
 <p>由一系列特殊编码的连续内存块组成的顺序型数据结构。</p>
 <p>一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。</p>
 <h3 id="压缩列表的构成"><a href="#压缩列表的构成" class="headerlink" title="压缩列表的构成"></a>压缩列表的构成</h3><p>包含三个节点的压缩列表，如下图：</p>
-<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png" alt="ziplist_1"><br><a id="more"></a></p>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png" alt="ziplist_1"></p>
 <h4 id="各部分详细说明"><a href="#各部分详细说明" class="headerlink" title="各部分详细说明"></a>各部分详细说明</h4><table>
 <thead>
 <tr>
@@ -437,6 +437,7 @@
 </table>
 <blockquote>
 <p>列表 <code>zlbytes</code> 属性的值为 <code>0x50</code> （十进制80），表示压缩列表的总长为 <code>80</code> 字节。</p>
+<a id="more"></a>
 <p>列表 <code>zltail</code> 属性的值为 <code>0x3c</code> （十进制60），这表示如果我们有一个指向压缩列表起始地址的指针 <code>p</code>，那么只要用指针 <code>p</code> 加上偏移量 <code>60</code> ，就可以计算出表尾节点 <code>entry3</code> 的地址。</p>
 <p>列表 <code>zllen</code> 属性的值为 <code>0x3</code> （十进制3），表示压缩列表包含三个节点。</p>
 </blockquote>
@@ -670,7 +671,7 @@
   <p><span>本文标题:</span><a href="/2019/06/21/Redis设计与实现-压缩列表/">Redis设计与实现(压缩列表)</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年06月21日 - 15:06</p>
-  <p><span>最后更新:</span>2019年07月05日 - 14:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/06/21/Redis设计与实现-压缩列表/" title="Redis设计与实现(压缩列表)">http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/06/21/Redis设计与实现-压缩列表/" aria-label="复制成功！"></i></span>
   </p>

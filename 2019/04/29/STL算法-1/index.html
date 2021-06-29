@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="本次所有的算法如下：stable_sort&amp;amp;partial_sort&amp;amp;nth_element&amp;amp;is_sorted&amp;amp;is_sorted_until&amp;amp;merge&amp;amp;inplace_merge&amp;amp;find_if 准备工作1234567891011121314struct Msg &amp;#123;	int index;	int msg;&amp;#125;;//用于">
+<meta name="description" content="本次所有的算法如下： stable_sort&amp;amp;partial_sort&amp;amp;nth_element&amp;amp;is_sorted&amp;amp;is_sorted_until&amp;amp;merge&amp;amp;inplace_merge&amp;amp;find_if准备工作1234567891011121314struct Msg &amp;#123;	int index;	int msg;&amp;#125;;//用于">
 <meta name="keywords" content="STL">
 <meta property="og:type" content="article">
 <meta property="og:title" content="STL算法(1)">
 <meta property="og:url" content="http://TokeyRoad.github.io/2019/04/29/STL算法-1/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="本次所有的算法如下：stable_sort&amp;amp;partial_sort&amp;amp;nth_element&amp;amp;is_sorted&amp;amp;is_sorted_until&amp;amp;merge&amp;amp;inplace_merge&amp;amp;find_if 准备工作1234567891011121314struct Msg &amp;#123;	int index;	int msg;&amp;#125;;//用于">
+<meta property="og:description" content="本次所有的算法如下： stable_sort&amp;amp;partial_sort&amp;amp;nth_element&amp;amp;is_sorted&amp;amp;is_sorted_until&amp;amp;merge&amp;amp;inplace_merge&amp;amp;find_if准备工作1234567891011121314struct Msg &amp;#123;	int index;	int msg;&amp;#125;;//用于">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-12T07:17:44.455Z">
+<meta property="og:updated_time" content="2021-06-29T14:20:49.914Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="STL算法(1)">
-<meta name="twitter:description" content="本次所有的算法如下：stable_sort&amp;amp;partial_sort&amp;amp;nth_element&amp;amp;is_sorted&amp;amp;is_sorted_until&amp;amp;merge&amp;amp;inplace_merge&amp;amp;find_if 准备工作1234567891011121314struct Msg &amp;#123;	int index;	int msg;&amp;#125;;//用于">
+<meta name="twitter:description" content="本次所有的算法如下： stable_sort&amp;amp;partial_sort&amp;amp;nth_element&amp;amp;is_sorted&amp;amp;is_sorted_until&amp;amp;merge&amp;amp;inplace_merge&amp;amp;find_if准备工作1234567891011121314struct Msg &amp;#123;	int index;	int msg;&amp;#125;;//用于">
 
 
 
@@ -381,12 +381,14 @@
       
 
       
-        <p>本次所有的算法如下：<br>stable_sort&amp;partial_sort&amp;nth_element&amp;is_sorted&amp;is_sorted_until&amp;merge&amp;inplace_merge&amp;find_if</p>
-<p>准备工作<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Msg</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> index;</span><br><span class="line">	<span class="keyword">int</span> msg;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//用于打印显式</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PrintVec</span><span class="params">(<span class="built_in">vector</span>&lt;Msg&gt;::iterator iter_begin, <span class="built_in">vector</span>&lt;Msg&gt;::iterator iter_end)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> iter = iter_begin; iter != iter_end; iter++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (iter != iter_begin) &#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"--"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iter-&gt;index &lt;&lt; <span class="string">":"</span> &lt;&lt; iter-&gt;msg;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<a id="more"></a>
+        <p>本次所有的算法如下：</p>
+<h5 id="stable-sort-amp-partial-sort-amp-nth-element-amp-is-sorted-amp-is-sorted-until-amp-merge-amp-inplace-merge-amp-find-if"><a href="#stable-sort-amp-partial-sort-amp-nth-element-amp-is-sorted-amp-is-sorted-until-amp-merge-amp-inplace-merge-amp-find-if" class="headerlink" title="stable_sort&amp;partial_sort&amp;nth_element&amp;is_sorted&amp;is_sorted_until&amp;merge&amp;inplace_merge&amp;find_if"></a>stable_sort&amp;partial_sort&amp;nth_element&amp;is_sorted&amp;is_sorted_until&amp;merge&amp;inplace_merge&amp;find_if</h5><p>准备工作<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Msg</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> index;</span><br><span class="line">	<span class="keyword">int</span> msg;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//用于打印显式</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PrintVec</span><span class="params">(<span class="built_in">vector</span>&lt;Msg&gt;::iterator iter_begin, <span class="built_in">vector</span>&lt;Msg&gt;::iterator iter_end)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> iter = iter_begin; iter != iter_end; iter++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (iter != iter_begin) &#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"--"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iter-&gt;index &lt;&lt; <span class="string">":"</span> &lt;&lt; iter-&gt;msg;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>生成数据（所有的排序针对index，msg只是为了标识稳定与否）<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;Msg&gt; v_msg;</span><br><span class="line"><span class="comment">//vector&lt;Msg&gt; v_msg_sec;</span></span><br><span class="line">Msg temp_msg;</span><br><span class="line"><span class="keyword">int</span> count = <span class="number">10</span>; </span><br><span class="line">srand((<span class="keyword">int</span>)time(<span class="number">0</span>));</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">	temp_msg.index = rand() % <span class="number">100</span>;</span><br><span class="line">	temp_msg.msg = i;</span><br><span class="line">	v_msg.push_back(temp_msg);</span><br><span class="line">	<span class="comment">//if (rand() % 2 == 0 &amp;&amp; i != 0) &#123;</span></span><br><span class="line">	<span class="comment">//	temp_msg.index = rand() % 100;</span></span><br><span class="line">	<span class="comment">//	temp_msg.msg = i;</span></span><br><span class="line">	<span class="comment">//	v_msg_sec.push_back(temp_msg);</span></span><br><span class="line">	<span class="comment">//&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <ul>
-<li>stable_sort<br>第三个参数表示 排序的要求（升降序）以及自定义方法.（稳定的排序）<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">::stable_sort(v_msg.begin(), v_msg.end(), [](<span class="keyword">const</span> Msg&amp; m1, <span class="keyword">const</span> Msg&amp; m2) &#123;<span class="keyword">return</span> m1.index &lt; m2.index; &#125;);<span class="comment">//升序(默认升序)</span></span><br></pre></td></tr></table></figure>
+<li><p>stable_sort</p>
+<a id="more"></a>
+<p>第三个参数表示 排序的要求（升降序）以及自定义方法.（稳定的排序）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">::stable_sort(v_msg.begin(), v_msg.end(), [](<span class="keyword">const</span> Msg&amp; m1, <span class="keyword">const</span> Msg&amp; m2) &#123;<span class="keyword">return</span> m1.index &lt; m2.index; &#125;);<span class="comment">//升序(默认升序)</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <p>排序前：<code>v_msg:86:0--42:1--74:2--45:3--55:4--42:5--91:6--15:7--59:8--50:9</code><br>排序后：<code>v_msg:15:7--42:1--42:5--45:3--50:9--55:4--59:8--74:2--86:0--91:6</code></p>
@@ -438,7 +440,7 @@
   <p><span>本文标题:</span><a href="/2019/04/29/STL算法-1/">STL算法(1)</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年04月29日 - 17:04</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/04/29/STL算法-1/" title="STL算法(1)">http://TokeyRoad.github.io/2019/04/29/STL算法-1/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/04/29/STL算法-1/" aria-label="复制成功！"></i></span>
   </p>
@@ -547,8 +549,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -652,6 +663,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#stable-sort-amp-partial-sort-amp-nth-element-amp-is-sorted-amp-is-sorted-until-amp-merge-amp-inplace-merge-amp-find-if"><span class="nav-number">1.</span> <span class="nav-text">stable_sort&amp;partial_sort&amp;nth_element&amp;is_sorted&amp;is_sorted_until&amp;merge&amp;inplace_merge&amp;find_if</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

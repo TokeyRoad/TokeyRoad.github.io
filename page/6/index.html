@@ -378,6 +378,11 @@
           <p>简单总结一下const的用法。</p>
 <h4 id="一、const修饰普通类型的变量。"><a href="#一、const修饰普通类型的变量。" class="headerlink" title="一、const修饰普通类型的变量。"></a>一、const修饰普通类型的变量。</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> a = <span class="number">7</span>;</span><br><span class="line"><span class="keyword">int</span> b = a;	<span class="comment">//正确</span></span><br><span class="line">a = <span class="number">8</span>;		<span class="comment">//错误，const修饰的参数为常量，不可修改</span></span><br></pre></td></tr></table></figure>
 <p>a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。</p>
+<p>简单实例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a = <span class="number">7</span>;</span><br><span class="line">    <span class="keyword">int</span> *p = (<span class="keyword">int</span>*)&amp;a;</span><br><span class="line">    *p = <span class="number">8</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a;		<span class="comment">//下断点，调试</span></span><br><span class="line">    <span class="comment">//这里会输出几呢?</span></span><br><span class="line">    <span class="comment">//输出：7</span></span><br><span class="line">    system(<span class="string">"pause"</span>);	</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个例子中，const 修饰 a，无法直接对a的值进行修改，但是通过*p直接对a地址内的值进行了赋值。</p>
+<p>下断点调试时，会发现在 <code>*p = 8</code> 之后，a的值就变为了8。</p>
+<p>但是程序最后输出的还是7。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/07/01/const用法总结/#more" rel="contents">
@@ -560,7 +565,51 @@
 <p>由一系列特殊编码的连续内存块组成的顺序型数据结构。</p>
 <p>一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。</p>
 <h3 id="压缩列表的构成"><a href="#压缩列表的构成" class="headerlink" title="压缩列表的构成"></a>压缩列表的构成</h3><p>包含三个节点的压缩列表，如下图：</p>
-<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png" alt="ziplist_1"><br></p>
+<p><img src="/2019/06/21/Redis设计与实现-压缩列表/ziplist_1.png" alt="ziplist_1"></p>
+<h4 id="各部分详细说明"><a href="#各部分详细说明" class="headerlink" title="各部分详细说明"></a>各部分详细说明</h4><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>长度</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zlbytes</code></td>
+<td><code>uint32_t</code></td>
+<td><code>4</code> 字节</td>
+<td>记录整个压缩列表占用的内存字节数：在对压缩列表进行内存重分配，或者计算 <code>zlend</code> 的位置时使用。</td>
+</tr>
+<tr>
+<td><code>zltail</code></td>
+<td><code>uint32_t</code></td>
+<td><code>4</code> 字节</td>
+<td>记录压缩列表表尾节点距离压缩列表的起始地址有多少个字节：通过这个偏移量，程序无须遍历整个压缩列表就可以确定表尾节点的地址。</td>
+</tr>
+<tr>
+<td><code>zllen</code></td>
+<td><code>uint16_t</code></td>
+<td><code>2</code> 字节</td>
+<td>记录了压缩列表包含的节点数量：当这个属性的值小于 <code>UINT16_MAX(65535)</code> 时，这个属性的值就是压缩列表包含节点的数量；当这个值等于 <code>UINT16_MAX</code> 时，节点的真实数量需要遍历整个压缩列表才能计算得出。</td>
+</tr>
+<tr>
+<td><code>entryX</code></td>
+<td>列表节点</td>
+<td>不定</td>
+<td>压缩列表的各个节点，节点的长度由节点保存的内容决定。</td>
+</tr>
+<tr>
+<td><code>zlend</code></td>
+<td><code>uint8_t</code></td>
+<td><code>1</code> 字节</td>
+<td>特殊值 <code>0xFF</code> （十进制 <code>255</code>），用于标记压缩列表的末端。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>列表 <code>zlbytes</code> 属性的值为 <code>0x50</code> （十进制80），表示压缩列表的总长为 <code>80</code> 字节。</p></blockquote>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/06/21/Redis设计与实现-压缩列表/#more" rel="contents">
@@ -742,6 +791,8 @@
           <p>​      整数集合（intset）是用于保存整数值的集合抽象数据结构，可以保存的类型为 <code>int16_t</code>、<code>int32_t</code>、<code>int64_t</code>的整数值，并且保证了集合不会出现重复的元素值。</p>
 <h4 id="整数集合的实现"><a href="#整数集合的实现" class="headerlink" title="整数集合的实现"></a>整数集合的实现</h4><p>​    每个 <code>intset.h/intset</code> 结构表示一个整数集合：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> &#123;</span></span><br><span class="line">	<span class="comment">//编码方式</span></span><br><span class="line">	<span class="keyword">uint32_t</span> encoding;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//集合包含的元素数量</span></span><br><span class="line">	<span class="keyword">uint32_t</span> length;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//保存元素的数组</span></span><br><span class="line">	<span class="keyword">int8_t</span> contents[];</span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+<p><code>contents</code> 数组是整数集合的底层实现：整数集合的每个元素都是 <code>contents</code>数组的一个数组项（item），各个项在数组中按值的大小从小到大有序的排列，并且数组中不包含任何重复项。</p>
+<p><code>length</code> 属性记录了整数集合包含的元素数量，也即是 <code>contents</code>数组的长度。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/06/04/Redis设计与实现-整数集合/#more" rel="contents">
@@ -921,9 +972,12 @@
       
         
           <p>涉及的算法如下：</p>
-<p>mismatch&amp;next_permutation(prev_permutation、is_permutation)&amp;copy&amp;unique&amp;rotate&amp;move</p>
-<p>准备工作</p>
+<h5 id="mismatch-amp-next-permutation-prev-permutation、is-permutation-amp-copy-amp-unique-amp-rotate-amp-move"><a href="#mismatch-amp-next-permutation-prev-permutation、is-permutation-amp-copy-amp-unique-amp-rotate-amp-move" class="headerlink" title="mismatch&amp;next_permutation(prev_permutation、is_permutation)&amp;copy&amp;unique&amp;rotate&amp;move"></a>mismatch&amp;next_permutation(prev_permutation、is_permutation)&amp;copy&amp;unique&amp;rotate&amp;move</h5><p>准备工作</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Msg</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> index;</span><br><span class="line">	<span class="keyword">int</span> msg;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//用于打印显式</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PrintVec</span><span class="params">(<span class="built_in">vector</span>&lt;Msg&gt;::iterator iter_begin, <span class="built_in">vector</span>&lt;Msg&gt;::iterator iter_end)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> iter = iter_begin; iter != iter_end; iter++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (iter != iter_begin) &#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"--"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; iter-&gt;index &lt;&lt; <span class="string">":"</span> &lt;&lt; iter-&gt;msg;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//打印INT数组</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PrintVecInt</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator iter_begin, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator iter_end)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> iter = iter_begin; iter != iter_end; iter++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (iter != iter_begin) &#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"--"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; *iter;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>生成数据（所有的排序针对index，msg只是为了标识稳定与否）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;Msg&gt; v_msg;</span><br><span class="line"><span class="comment">//vector&lt;Msg&gt; v_msg_sec;</span></span><br><span class="line">Msg temp_msg;</span><br><span class="line"><span class="keyword">int</span> count = <span class="number">10</span>; </span><br><span class="line">srand((<span class="keyword">int</span>)time(<span class="number">0</span>));</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">	temp_msg.index = rand() % <span class="number">100</span>;</span><br><span class="line">	temp_msg.msg = i;</span><br><span class="line">	v_msg.push_back(temp_msg);</span><br><span class="line">	<span class="comment">//if (rand() % 2 == 0 &amp;&amp; i != 0) &#123;</span></span><br><span class="line">	<span class="comment">//	temp_msg.index = rand() % 100;</span></span><br><span class="line">	<span class="comment">//	temp_msg.msg = i;</span></span><br><span class="line">	<span class="comment">//	v_msg_sec.push_back(temp_msg);</span></span><br><span class="line">	<span class="comment">//&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>mismatch</p></li></ul>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/05/27/STL算法-3/#more" rel="contents">
@@ -1105,6 +1159,15 @@
           <p>Redis跳跃表的实现。</p>
 <p>用到的两个结构体<code>redis.h/zskiplistNode</code>和<code>redis.h/zskiplist</code>两个结构定义，其中<code>zskiplistNode</code>结构表示跳跃表节点，而<code>zskiplist</code>结构则是用于保存跳跃表节点的相关信息，具体的以下有讲解。</p>
 <h4 id="一个跳跃表的例子"><a href="#一个跳跃表的例子" class="headerlink" title="一个跳跃表的例子"></a>一个跳跃表的例子</h4><p><img src="/2019/05/21/Redis设计与实现-跳跃表/skiplist_1.png" alt="跳跃表示例"></p>
+<p>其中图片最左边的是<code>zskiplist</code>结构,包含以下属性：</p>
+<ul>
+<li><p><code>header</code> 指向跳跃表的表头节点。</p>
+</li>
+<li><p><code>tail</code> 指向跳跃表的表尾节点。</p>
+</li>
+<li><p><code>level</code> 记录目前跳跃表内，层数最大的那个节点的层数（表头节点的层数不计算在内）。</p>
+</li>
+<li><p><code>length</code> 记录跳跃表的长度，也就是跳跃表目前包含节点的数量（表头节点不包含在内）。</p></li></ul>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/05/21/Redis设计与实现-跳跃表/#more" rel="contents">

@@ -375,7 +375,10 @@
 
       
         
-          <h6 id="explicit"><a href="#explicit" class="headerlink" title="explicit"></a>explicit</h6>
+          <h6 id="explicit"><a href="#explicit" class="headerlink" title="explicit"></a>explicit</h6><p>指定构造函数或转换函数为显示，即它不能用于隐式转换和复制初始化。</p>
+<p>explicit说明符只能出现在类定义之内的构造函数或转换函数的声明说明符序列。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span>&#123;</span></span><br><span class="line">	A(<span class="keyword">int</span>)&#123;&#125;</span><br><span class="line">	A(<span class="keyword">int</span>,<span class="keyword">int</span>)&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">B</span>&#123;</span></span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">B</span><span class="params">(<span class="keyword">int</span>)</span></span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">B</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TestExpl</span><span class="params">()</span></span>&#123;</span><br><span class="line">	A a1 = <span class="number">1</span>;		<span class="comment">// A a1 = A(1);</span></span><br><span class="line">	<span class="comment">// B b1 = 1;	//error</span></span><br><span class="line">	<span class="function">A <span class="title">a2</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line">	<span class="function">B <span class="title">b2</span><span class="params">(<span class="number">2</span>)</span></span>;		<span class="comment">//OK</span></span><br><span class="line">	A a3 = &#123;<span class="number">4</span>,<span class="number">5</span>&#125;;	<span class="comment">// A a3 = A&#123;4,5&#125;;  A&#123;4,5&#125;;</span></span><br><span class="line">	<span class="comment">// B b3 = &#123;4,5&#125;;//error</span></span><br><span class="line">	<span class="keyword">int</span> na1 = a1;	<span class="comment">//OK</span></span><br><span class="line">	<span class="comment">//int na1 = b2;	//error</span></span><br><span class="line">	<span class="keyword">int</span> na2 = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(a1);</span><br><span class="line">	<span class="keyword">int</span> nb2 = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(b2);</span><br><span class="line">	A a4 = (A)<span class="number">1</span>;</span><br><span class="line">	B b4 = (B)<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="nullptr"><a href="#nullptr" class="headerlink" title="nullptr"></a>nullptr</h6><p>C++11引入的，指代空指针。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/03/13/C++关键字-2/#more" rel="contents">
@@ -516,7 +519,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  796
+                  795
                 </span>
               
 
@@ -554,7 +557,13 @@
 
       
         
-          <h6 id="alignas-amp-alignof"><a href="#alignas-amp-alignof" class="headerlink" title="alignas&amp;alignof"></a>alignas&amp;alignof</h6>
+          <h6 id="alignas-amp-alignof"><a href="#alignas-amp-alignof" class="headerlink" title="alignas&amp;alignof"></a>alignas&amp;alignof</h6><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Foo</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="keyword">char</span> c;</span><br><span class="line">	<span class="keyword">float</span> f;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Empty</span>&#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">struct <span class="title">alignas</span><span class="params">(<span class="number">64</span>)</span> Empty64 </span>&#123;&#125;;</span><br><span class="line"><span class="comment">//0会被忽略</span></span><br><span class="line"><span class="function">struct <span class="title">alignas</span><span class="params">(<span class="number">0</span>)</span> BB </span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">struct <span class="title">alignas</span><span class="params">(<span class="number">8</span>)</span> Double </span>&#123;</span><br><span class="line">	<span class="keyword">double</span> d;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Obj</span> &#123;</span></span><br><span class="line">	<span class="keyword">char</span> a;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//alignof </span></span><br><span class="line"><span class="keyword">int</span> s_obj = <span class="keyword">sizeof</span>(Obj);	<span class="comment">//8</span></span><br><span class="line"><span class="keyword">int</span> a_obj = <span class="keyword">alignof</span>(Obj);	<span class="comment">//4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">alignInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Alignment of"</span> <span class="string">"\n"</span></span><br><span class="line">		<span class="string">"- char					:"</span> &lt;&lt; <span class="keyword">alignof</span>(<span class="keyword">char</span>)			&lt;&lt; <span class="string">"\n"</span>		<span class="comment">//1</span></span><br><span class="line">		<span class="string">"- pointer				:"</span> &lt;&lt; <span class="keyword">alignof</span>(<span class="keyword">int</span>*)			&lt;&lt; <span class="string">"\n"</span>		<span class="comment">//8 4</span></span><br><span class="line">		<span class="string">"- empty class			:"</span> &lt;&lt; <span class="keyword">alignof</span>(Empty)		&lt;&lt; <span class="string">"\n"</span>		<span class="comment">//1</span></span><br><span class="line">		<span class="string">"- class Foo			:"</span> &lt;&lt; <span class="keyword">alignof</span>(Foo)			&lt;&lt; <span class="string">"\n"</span>		<span class="comment">//4</span></span><br><span class="line">		<span class="string">"- alignas(64) Empty	:"</span> &lt;&lt; <span class="keyword">alignof</span>(Empty64)		&lt;&lt; <span class="string">"\n"</span>		<span class="comment">//64</span></span><br><span class="line">		<span class="string">"- alignas(1) Double	:"</span> &lt;&lt; <span class="keyword">alignof</span>(Double)		&lt;&lt; <span class="string">"\n"</span>;	<span class="comment">//8(WIN下编译报错)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="and-amp-amp-and-eq"><a href="#and-amp-amp-and-eq" class="headerlink" title="and&amp;&amp;and_eq"></a>and&amp;&amp;and_eq</h6><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iso646.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AND</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">//and 等价于 &amp;</span></span><br><span class="line">	<span class="keyword">int</span> a = <span class="number">10</span>;</span><br><span class="line">	<span class="keyword">int</span> b = <span class="number">20</span>;</span><br><span class="line">	b and_eq a;</span><br><span class="line">	<span class="comment">//等价于 b &amp;= a;</span></span><br><span class="line">	<span class="comment">//等价于 b = b &amp; a;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="asm"><a href="#asm" class="headerlink" title="asm"></a>asm</h6><p>用于在C++代码中嵌入汇编语言，不常用</p>
+<h6 id="auto"><a href="#auto" class="headerlink" title="auto"></a>auto</h6><ol>
+<li><p>对于变量，指定将要从其初始值设定项自动推断出要声明的变量的类型。</p>
+</li>
+<li><p>对于函数，指定将其从其return语句推导返回类型。</p></li></ol>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/03/12/C++关键字-1/#more" rel="contents">
@@ -733,12 +742,15 @@
 
       
         
-          
-          工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷）
-一、引言cURL、libcurl 还有 curl，他们究竟是什么？
-也就是说，我们需要去了解下 libcurl 及其相关的概念。
-二、cURL、libcurl 还有 curl 傻傻分不清楚 T
-          ...
+          <p>工作的原因，需要使用libcurl库，这里整理一下过程，方便日后食用。（很大一部分来自网络资源，不喜勿喷）</p>
+<h4 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h4><p>cURL、libcurl 还有 curl，他们究竟是什么？</p>
+<p>也就是说，我们需要去了解下 libcurl 及其相关的概念。</p>
+<h4 id="二、cURL、libcurl-还有-curl-傻傻分不清楚-T-T"><a href="#二、cURL、libcurl-还有-curl-傻傻分不清楚-T-T" class="headerlink" title="二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T"></a>二、cURL、libcurl 还有 curl 傻傻分不清楚 T_T</h4><p>可能对于新人来说，就连 cURL、libcurl 和 curl 的概念都是分不清楚的。这不怪我们，确实关于这一点，官方网站都没有说的很清楚，但是在源代码中的 FAQ 文档中却说的非常明白。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">What is cURL? </span><br><span class="line">cURL is the name of the project. The name is a play on ‘Client for URLs’, originally with URL spelled in uppercase to make it obvious it deals with URLs. The fact ti can also be pronounced ‘see URL’ alse helped, it works as an abbreviation for “Client URL Request Library” or why not the recursive version: “Curl URL Request Library”.</span><br></pre></td></tr></table></figure>
+<p>简而言之，cURL 是一个项目的名称。是 Client for URLs、see URL、Client URL Request Library 或者 Curl URL Request Library 的缩写，也就是一个客户端 URL 请求库的项目。</p>
+<p>那么什么是 libcurl 呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">The cURL project produces two products: </span><br><span class="line">libcurl </span><br><span class="line">A free and easy-to-use client-side URL transfer library. </span><br><span class="line">… </span><br><span class="line">curl </span><br><span class="line">A command line tool for getting or sending files using URL syntax.</span><br></pre></td></tr></table></figure>
+<p>上面这段话很清晰的表现出了 cURL 与 libcurl 以及 curl 的关系，也就是说：</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/07/19/libcurl-编译使用/#more" rel="contents">
@@ -917,12 +929,22 @@
 
       
         
-          
-          列表对象的编码可以是 ziplist 或者 linkedlist 。
-
-ziplist 编码的列表对象使用压缩列表作为底层实现，每个压缩列表节点（entry）保存了一个列表元素。
-linkedlist 编码的列表对象使用双端链表作为底层实现，每个双端链表节点（node）都保存了一个字符串对象，而每个
-          ...
+          <p>列表对象的编码可以是 <code>ziplist</code> 或者 <code>linkedlist</code> 。</p>
+<ul>
+<li><code>ziplist</code> 编码的列表对象使用压缩列表作为底层实现，每个压缩列表节点（entry）保存了一个列表元素。</li>
+<li><code>linkedlist</code> 编码的列表对象使用双端链表作为底层实现，每个双端链表节点（node）都保存了一个字符串对象，而每个字符串对象都保存了一个列表元素。</li>
+</ul>
+<blockquote>
+<p> 注：linkedlist编码的列表对象在底层的双端链表结构中包含了多个字符串对象，这种嵌套字符串对象的行为在后续的哈希对象，集合对象，有序集合对象中都会出现，字符串对象是Redis五种类型的对象中唯一的一个会被嵌套的对象。</p>
+</blockquote>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; RPUSH numbers 1 &quot;three&quot; 5</span><br><span class="line">(integer) 3</span><br></pre></td></tr></table></figure>
+<p>创建出一个列表对象 作为 <code>numbers</code> 键的值。</p>
+<p>如果 <code>numbers</code>键的值对象使用的是 <code>ziplist</code> 编码，这个值对象结构如下：</p>
+<p><img src="/2019/07/17/Redis设计与实现-列表对象/ListObject_1.png" alt="ListObject_1"></p>
+<p>如果 <code>numbers</code> 键的值对象使用的不是 <code>ziplist</code> 编码，而是 <code>linkedlist</code> 编码，值结构如下：</p>
+<p><img src="/2019/07/17/Redis设计与实现-列表对象/ListObject_2.png" alt="ListObject_2"></p>
+<p>下图表示一个包含了字符串值 <code>“three”</code> 的字符串对象：</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/07/17/Redis设计与实现-列表对象/#more" rel="contents">
@@ -1101,11 +1123,45 @@ linkedlist 编码的列表对象使用双端链表作为底层实现，每个双
 
       
         
-          
-          Redis的键值对都是由对象来表示的，即每次创建一个新的键值对时，我们会至少创建两个对象，一个对象用作键（键对象），另一个用作值（值对象）。
-Redis的每一个对象都是由一个 redisObject 结构表示，该结构中和保存数据有关的三个属性分别是 type、encoding、ptr 属性:
-123
-          ...
+          <p>Redis的键值对都是由对象来表示的，即每次创建一个新的键值对时，我们会至少创建两个对象，一个对象用作键（键对象），另一个用作值（值对象）。</p>
+<p>Redis的每一个对象都是由一个 <code>redisObject</code> 结构表示，该结构中和保存数据有关的三个属性分别是 <code>type</code>、<code>encoding</code>、<code>ptr</code> 属性:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span>&#123;</span></span><br><span class="line">    <span class="comment">//类型</span></span><br><span class="line">    <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">    <span class="comment">//编码</span></span><br><span class="line">    <span class="keyword">unsigned</span> encoding:<span class="number">4</span>;</span><br><span class="line">    <span class="comment">//指向底层实现数据结构的指针</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">&#125;robj;</span><br></pre></td></tr></table></figure>
+<h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><p>对象的 <code>type</code> 属性记录了对象的类型，属性值对应的常量如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型常量</th>
+<th>对象的名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REDIS_STRING</code></td>
+<td>字符串对象</td>
+</tr>
+<tr>
+<td><code>REDIS_LIST</code></td>
+<td>列表对象</td>
+</tr>
+<tr>
+<td><code>REDIS_HASH</code></td>
+<td>哈希对象</td>
+</tr>
+<tr>
+<td><code>REDIS_SET</code></td>
+<td>集合对象</td>
+</tr>
+<tr>
+<td><code>REDIS_ZSET</code></td>
+<td>有序集合对象</td>
+</tr>
+</tbody>
+</table>
+<p>对于Redis数据库保存的键值对，键总是一个字符串对象，而值则可以是字符串对象、列表对象、哈希对象、集合对象或者有序集合对象的其中一种，因此：</p>
+<ul>
+<li><p>当称呼一个数据库键为 “字符串键”时，我们指的是“这个数据库键所对应的值为字符串对象”；</p>
+</li>
+<li><p>当称呼一个键为“列表键”时，我们指的是“这个数据库键所对应的值为列表对象”。</p></li></ul>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/07/05/Redis设计与实现-字符串对象/#more" rel="contents">

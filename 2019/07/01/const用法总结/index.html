@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="简单总结一下const的用法。 一、const修饰普通类型的变量。123const int a = 7;int b = a;	//正确a = 8;		//错误，const修饰的参数为常量，不可修改 a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。">
+<meta name="description" content="简单总结一下const的用法。 一、const修饰普通类型的变量。123const int a = 7;int b = a;	//正确a = 8;		//错误，const修饰的参数为常量，不可修改 a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。 简单实例： 123456789101112#include&amp;lt;iostream&amp;gt;int main(void)&amp;#123;">
 <meta name="keywords" content="C++,Const">
 <meta property="og:type" content="article">
 <meta property="og:title" content="const用法总结">
 <meta property="og:url" content="http://TokeyRoad.github.io/2019/07/01/const用法总结/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="简单总结一下const的用法。 一、const修饰普通类型的变量。123const int a = 7;int b = a;	//正确a = 8;		//错误，const修饰的参数为常量，不可修改 a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。">
+<meta property="og:description" content="简单总结一下const的用法。 一、const修饰普通类型的变量。123const int a = 7;int b = a;	//正确a = 8;		//错误，const修饰的参数为常量，不可修改 a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。 简单实例： 123456789101112#include&amp;lt;iostream&amp;gt;int main(void)&amp;#123;">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-05T03:42:24.743Z">
+<meta property="og:updated_time" content="2021-06-29T14:16:08.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="const用法总结">
-<meta name="twitter:description" content="简单总结一下const的用法。 一、const修饰普通类型的变量。123const int a = 7;int b = a;	//正确a = 8;		//错误，const修饰的参数为常量，不可修改 a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。">
+<meta name="twitter:description" content="简单总结一下const的用法。 一、const修饰普通类型的变量。123const int a = 7;int b = a;	//正确a = 8;		//错误，const修饰的参数为常量，不可修改 a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。 简单实例： 123456789101112#include&amp;lt;iostream&amp;gt;int main(void)&amp;#123;">
 
 
 
@@ -384,12 +384,12 @@
         <p>简单总结一下const的用法。</p>
 <h4 id="一、const修饰普通类型的变量。"><a href="#一、const修饰普通类型的变量。" class="headerlink" title="一、const修饰普通类型的变量。"></a>一、const修饰普通类型的变量。</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> a = <span class="number">7</span>;</span><br><span class="line"><span class="keyword">int</span> b = a;	<span class="comment">//正确</span></span><br><span class="line">a = <span class="number">8</span>;		<span class="comment">//错误，const修饰的参数为常量，不可修改</span></span><br></pre></td></tr></table></figure>
 <p>a被 const修饰之后，被编译器识别为一个常量，常量不能被赋值。</p>
-<a id="more"></a>
 <p>简单实例：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a = <span class="number">7</span>;</span><br><span class="line">    <span class="keyword">int</span> *p = (<span class="keyword">int</span>*)&amp;a;</span><br><span class="line">    *p = <span class="number">8</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a;		<span class="comment">//下断点，调试</span></span><br><span class="line">    <span class="comment">//这里会输出几呢?</span></span><br><span class="line">    <span class="comment">//输出：7</span></span><br><span class="line">    system(<span class="string">"pause"</span>);	</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个例子中，const 修饰 a，无法直接对a的值进行修改，但是通过*p直接对a地址内的值进行了赋值。</p>
 <p>下断点调试时，会发现在 <code>*p = 8</code> 之后，a的值就变为了8。</p>
 <p>但是程序最后输出的还是7。</p>
+<a id="more"></a>
 <p>从上述实例中发现，编译器对const修饰的a进行了优化，一直认为a的值为定义的7，当对它的地址的值修改之后，编译器并没有去修改它，认为它还是常量7，如果后续有用到a的操作可能会产生意想不到的结果。</p>
 <p>如果不想让编译器对它的优化，在const前面添加 volatile关键字。</p>
 <p>volatile关键字和const是相反的，不会被编译器优化，a的值也就会被改变了。</p>
@@ -440,7 +440,7 @@
   <p><span>本文标题:</span><a href="/2019/07/01/const用法总结/">const用法总结</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年07月01日 - 10:07</p>
-  <p><span>最后更新:</span>2019年07月05日 - 11:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/07/01/const用法总结/" title="const用法总结">http://TokeyRoad.github.io/2019/07/01/const用法总结/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/07/01/const用法总结/" aria-label="复制成功！"></i></span>
   </p>

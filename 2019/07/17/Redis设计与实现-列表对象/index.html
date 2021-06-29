@@ -91,7 +91,7 @@
 <meta property="og:image" content="http://tokeyroad.github.io/2019/07/17/Redis设计与实现-列表对象/ListObject_2.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/07/17/Redis设计与实现-列表对象/ListObject_3.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/07/17/Redis设计与实现-列表对象/ListObject_4.png">
-<meta property="og:updated_time" content="2019-07-17T03:42:19.876Z">
+<meta property="og:updated_time" content="2021-06-29T14:19:12.196Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis设计与实现(列表对象)">
 <meta name="twitter:description" content="列表对象的编码可以是 ziplist 或者 linkedlist 。  ziplist 编码的列表对象使用压缩列表作为底层实现，每个压缩列表节点（entry）保存了一个列表元素。 linkedlist 编码的列表对象使用双端链表作为底层实现，每个双端链表节点（node）都保存了一个字符串对象，而每个字符串对象都保存了一个列表元素。    注：linkedlist编码的列表对象在底层的双端链表结构中">
@@ -402,6 +402,7 @@
 <p>如果 <code>numbers</code> 键的值对象使用的不是 <code>ziplist</code> 编码，而是 <code>linkedlist</code> 编码，值结构如下：</p>
 <p><img src="/2019/07/17/Redis设计与实现-列表对象/ListObject_2.png" alt="ListObject_2"></p>
 <p>下图表示一个包含了字符串值 <code>“three”</code> 的字符串对象：</p>
+<a id="more"></a>
 <p>简化表示：</p>
 <p><img src="/2019/07/17/Redis设计与实现-列表对象/ListObject_3.png" alt="ListObject_3"></p>
 <p>实际结构：</p>
@@ -495,7 +496,7 @@
   <p><span>本文标题:</span><a href="/2019/07/17/Redis设计与实现-列表对象/">Redis设计与实现(列表对象)</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年07月17日 - 09:07</p>
-  <p><span>最后更新:</span>2019年07月17日 - 11:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/07/17/Redis设计与实现-列表对象/" title="Redis设计与实现(列表对象)">http://TokeyRoad.github.io/2019/07/17/Redis设计与实现-列表对象/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/07/17/Redis设计与实现-列表对象/" aria-label="复制成功！"></i></span>
   </p>

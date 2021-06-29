@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="TokeyRoad">
 <meta property="og:description" content="1.安装node.js和git这个不用多说，直接下载安装就行了。 2.配置 git 个人信息，生成新的 ssh 密钥：git config –global user.name “xxxxxx” git config –global user.email “xxxxxx” ssh-keygen -t rsa -C “xxxxxxxx(邮箱)” 3.添加公钥在用户文件夹.ssh 文件里面把公钥复制出来">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-12-21T08:03:12.611Z">
+<meta property="og:updated_time" content="2021-06-29T14:22:07.593Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重装系统之后hexo博客恢复">
 <meta name="twitter:description" content="1.安装node.js和git这个不用多说，直接下载安装就行了。 2.配置 git 个人信息，生成新的 ssh 密钥：git config –global user.name “xxxxxx” git config –global user.email “xxxxxx” ssh-keygen -t rsa -C “xxxxxxxx(邮箱)” 3.添加公钥在用户文件夹.ssh 文件里面把公钥复制出来">
@@ -386,6 +386,7 @@
 <h3 id="3-添加公钥"><a href="#3-添加公钥" class="headerlink" title="3.添加公钥"></a>3.添加公钥</h3><p>在用户文件夹.ssh 文件里面把公钥复制出来粘贴到github个人设置的ssh位置。</p>
 <h3 id="4-安装hexo"><a href="#4-安装hexo" class="headerlink" title="4.安装hexo"></a>4.安装hexo</h3><p> npm install hexo-cli -g</p>
 <h3 id="5-删除博客文件夹文件，保留部分"><a href="#5-删除博客文件夹文件，保留部分" class="headerlink" title="5.删除博客文件夹文件，保留部分"></a>5.删除博客文件夹文件，保留部分</h3><p>必须拷贝文件：<br> ├──_config.yml<br> ├── theme<br> ├── scaffolds #文章模板<br> ├── package.json #说明使用哪些包<br> ├── .gitignore #限定在提交的时候哪些文件可以忽略<br> └── source</p>
+<a id="more"></a>
 <p>（1）讨论下哪些文件是必须拷贝的：首先是之前自己修改的文件，像站点配置_config.yml，theme文件夹里面的主题，以及source里面自己写的博客文件，这些肯定要拷贝的。除此之外，还有三个文件需要有，就是scaffolds文件夹（文章的模板）、package.json（说明使用哪些包）和.gitignore（限定在提交的时候哪些文件可以忽略）。其实，这三个文件不是我们修改的，所以即使丢失了，也没有关系，我们可以建立一个新的文件夹，然后在里面执行hexo init，就会生成这三个文件，我们只需要将它们拷贝过来使用即可。总结：_config.yml，theme/，source/，scaffolds/，package.json，.gitignore，是需要拷贝的。</p>
 <p>（2）再讨论下哪些文件是不必拷贝的，或者说可以删除的：首先是.git文件，无论是在站点根目录下，还是主题目录下的.git文件，都可以删掉。然后是文件夹node_modules（在用npm install会重新生成），public（这个在用hexo g时会重新生成），.deploy_git文件夹（在使用hexo d时也会重新生成），db.json文件。其实上面这些文件也就是是.gitignore文件里面记载的可以忽略的内容。总结：.git/，node_modules/，public/，.deploy_git/，db.json文件需要删除。</p>
 <h3 id="6-git-bash"><a href="#6-git-bash" class="headerlink" title="6.git bash"></a>6.git bash</h3><p>在本文件夹下git bash,运行npm install</p>
@@ -409,7 +410,7 @@
   <p><span>本文标题:</span><a href="/2020/11/22/重装系统之后hexo博客恢复/">重装系统之后hexo博客恢复</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2020年11月22日 - 21:11</p>
-  <p><span>最后更新:</span>2020年12月21日 - 16:12</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2020/11/22/重装系统之后hexo博客恢复/" title="重装系统之后hexo博客恢复">http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/" aria-label="复制成功！"></i></span>
   </p>

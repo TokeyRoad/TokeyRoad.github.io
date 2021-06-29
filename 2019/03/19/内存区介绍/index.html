@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="内存主要分为五个区域：">
+<meta name="description" content="内存主要分为五个区域：（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内存区介绍">
 <meta property="og:url" content="http://TokeyRoad.github.io/2019/03/19/内存区介绍/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="内存主要分为五个区域：">
+<meta property="og:description" content="内存主要分为五个区域：（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-12T07:17:19.272Z">
+<meta property="og:updated_time" content="2021-06-29T14:24:43.157Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="内存区介绍">
-<meta name="twitter:description" content="内存主要分为五个区域：">
+<meta name="twitter:description" content="内存主要分为五个区域：（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时">
 
 
 
@@ -380,7 +380,7 @@
       
 
       
-        <p>内存主要分为五个区域：<br><a id="more"></a><br>（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。<br>（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。<br>（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时由OS回收。<br>（4）    全局区/静态区（Global Static Area）:全局变量和静态变量存放区，程序编译好之后，在程序初始化的时候，全局变量和静态变量会被初始化赋值，没有区分初始化变量和未初始化变量，需要表明一点，全局静态变量和局部静态变量都是存储在同一个静态区，只是作用域不同。<br>（5）    常量存储区:比较特殊的区域，专门用来存储一些不可修改的常量（一般是指const变量，也有一些常量字符串）。</p>
+        <p>内存主要分为五个区域：<br>（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。<br>（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。<br>（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时由OS回收。<br>（4）    全局区/静态区（Global Static Area）:全局变量和静态变量存放区，程序编译好之后，在程序初始化的时候，全局变量和静态变量会被初始化赋值，没有区分初始化变量和未初始化变量，需要表明一点，全局静态变量和局部静态变量都是存储在同一个静态区，只是作用域不同。<br>（5）    常量存储区:比较特殊的区域，专门用来存储一些不可修改的常量（一般是指const变量，也有一些常量字符串）。</p>
 
       
     </div>
@@ -399,7 +399,7 @@
   <p><span>本文标题:</span><a href="/2019/03/19/内存区介绍/">内存区介绍</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年03月19日 - 21:03</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/03/19/内存区介绍/" title="内存区介绍">http://TokeyRoad.github.io/2019/03/19/内存区介绍/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/03/19/内存区介绍/" aria-label="复制成功！"></i></span>
   </p>
@@ -438,8 +438,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/19/内存分配的实例分析/" rel="next" title="内存分配的实例分析">
-                <i class="fa fa-chevron-left"></i> 内存分配的实例分析
+              <a href="/2019/03/19/指针和引用的异同/" rel="next" title="指针和引用的异同">
+                <i class="fa fa-chevron-left"></i> 指针和引用的异同
               </a>
             
           </div>
@@ -448,8 +448,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/03/19/内存中堆和栈的理解/" rel="prev" title="内存中堆和栈的理解">
-                内存中堆和栈的理解 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/03/19/内存分配的实例分析/" rel="prev" title="内存分配的实例分析">
+                内存分配的实例分析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

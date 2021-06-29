@@ -376,15 +376,13 @@
       
         
           
-          C++ 11提供了std::condition_variable这个类 代表条件变量，与Linux系统原生的条件变量一样，同时还提供了等待条件变量的一系列wait方法(wait/wait_for/wait_until)，发送信号使用notify方法(notify_one/notify_all)，使用
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/05/20/线程资源同步对象-condition-variable/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p>C++ 11提供了std::condition_variable这个类 代表条件变量，与Linux系统原生的条件变量一样，同时还提供了等待条件变量的一系列wait方法(wait/wait_for/wait_until)，发送信号使用notify方法(notify_one/notify_all)，使用std::condition_variable时需要绑定到std::unique_lock或std::lock_guard对象。</p>
+<blockquote>
+<p>C++ 11中 std::condition_variable 不再需要显示调用方法初始化和销毁</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;shared_mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;list&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	Task(<span class="keyword">int</span> id) &#123;</span><br><span class="line">		m_taskID = id;</span><br><span class="line">	&#125;</span><br><span class="line">	~Task() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">DoTask</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"do task,taskID:"</span> &lt;&lt; m_taskID &lt;&lt; <span class="string">", threadID:"</span> &lt;&lt; <span class="built_in">std</span>::this_thread::get_id() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> m_taskID;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::mutex mutex;</span><br><span class="line"><span class="built_in">std</span>::condition_variable cv;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">list</span>&lt;Task*&gt; tasks;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">produce_thread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Task* pTask = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">int</span> taskID = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">		pTask = <span class="keyword">new</span> Task(taskID);</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lg(mutex);</span><br><span class="line">			tasks.push_back(pTask);</span><br><span class="line">			<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"produce a task,taskID:"</span> &lt;&lt; taskID &lt;&lt; <span class="string">",threadID:"</span> &lt;&lt; <span class="built_in">std</span>::this_thread::get_id() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		cv.notify_all();</span><br><span class="line">		taskID++;</span><br><span class="line">		<span class="built_in">std</span>::this_thread::sleep_for(<span class="built_in">std</span>::chrono::seconds(<span class="number">1</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">consume_thread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Task* pTask = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">int</span> taskID = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">		<span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; guard(mutex);</span><br><span class="line">		<span class="keyword">while</span> (tasks.empty()) &#123;</span><br><span class="line">			cv.wait(guard);</span><br><span class="line">		&#125;</span><br><span class="line">		pTask = tasks.front();</span><br><span class="line">		tasks.pop_front();</span><br><span class="line">		<span class="keyword">if</span> (pTask == <span class="literal">NULL</span>) &#123;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		pTask-&gt;DoTask();</span><br><span class="line">		<span class="keyword">delete</span> pTask;</span><br><span class="line">		pTask = <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::thread consume1 = <span class="built_in">std</span>::thread(consume_thread);</span><br><span class="line">	<span class="built_in">std</span>::thread consume2 = <span class="built_in">std</span>::thread(consume_thread);</span><br><span class="line">	<span class="built_in">std</span>::thread consume3 = <span class="built_in">std</span>::thread(consume_thread);</span><br><span class="line">	<span class="built_in">std</span>::thread consume4 = <span class="built_in">std</span>::thread(consume_thread);</span><br><span class="line">	<span class="built_in">std</span>::thread consume5 = <span class="built_in">std</span>::thread(consume_thread);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">std</span>::thread produce1 = <span class="built_in">std</span>::thread(produce_thread);</span><br><span class="line">	<span class="comment">//std::thread produce2 = std::thread(produce_thread);</span></span><br><span class="line">	<span class="comment">//std::thread produce3 = std::thread(produce_thread);</span></span><br><span class="line"></span><br><span class="line">	consume1.join();</span><br><span class="line">	consume2.join();</span><br><span class="line">	consume3.join();</span><br><span class="line">	consume4.join();</span><br><span class="line">	consume5.join();</span><br><span class="line">	produce1.join();</span><br><span class="line">	<span class="comment">//produce2.join();</span></span><br><span class="line">	<span class="comment">//produce3.join();</span></span><br><span class="line"></span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output:</span></span><br><span class="line">produce a task,taskID:<span class="number">0</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">0</span>, threadID:<span class="number">6344</span></span><br><span class="line">produce a task,taskID:<span class="number">1</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">1</span>, threadID:<span class="number">6352</span></span><br><span class="line">produce a task,taskID:<span class="number">2</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">2</span>, threadID:<span class="number">4836</span></span><br><span class="line">produce a task,taskID:<span class="number">3</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">3</span>, threadID:<span class="number">6352</span></span><br><span class="line">produce a task,taskID:<span class="number">4</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">4</span>, threadID:<span class="number">6344</span></span><br><span class="line">produce a task,taskID:<span class="number">5</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">5</span>, threadID:<span class="number">4836</span></span><br><span class="line">produce a task,taskID:<span class="number">6</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">6</span>, threadID:<span class="number">13436</span></span><br><span class="line">produce a task,taskID:<span class="number">7</span>,threadID:<span class="number">19444</span></span><br><span class="line"><span class="keyword">do</span> task,taskID:<span class="number">7</span>, threadID:<span class="number">4836</span></span><br><span class="line">    .........</span><br></pre></td></tr></table></figure>
+
+          
         
       
     </div>
@@ -556,26 +554,85 @@
 
       
         
-          
-          在C++ 11新标准中新增了线程资源同步对象：std::mutex 和 std::condition_variable 。
-std::mutex 系列C++ 11/14/17中提供了如下mutex系列类型：
-
-
-
-互斥量
-版本
-作用
-
-
-
-
-mutex
-C++ 11
-最基本的互斥量
-
-
-timed_
-          ...
+          <p>在C++ 11新标准中新增了线程资源同步对象：std::mutex 和 std::condition_variable 。</p>
+<h5 id="std-mutex-系列"><a href="#std-mutex-系列" class="headerlink" title="std::mutex 系列"></a>std::mutex 系列</h5><p>C++ 11/14/17中提供了如下mutex系列类型：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">互斥量</th>
+<th style="text-align:center">版本</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">mutex</td>
+<td style="text-align:center">C++ 11</td>
+<td style="text-align:center">最基本的互斥量</td>
+</tr>
+<tr>
+<td style="text-align:center">timed_mutex</td>
+<td style="text-align:center">C++ 11</td>
+<td style="text-align:center">有超时机制的互斥量</td>
+</tr>
+<tr>
+<td style="text-align:center">recursive_mutex</td>
+<td style="text-align:center">C++ 11</td>
+<td style="text-align:center">可重入的互斥量</td>
+</tr>
+<tr>
+<td style="text-align:center">recursive_timed_mutex</td>
+<td style="text-align:center">C++ 11</td>
+<td style="text-align:center">结合timed_mutex和recursive_mutex特点的互斥量</td>
+</tr>
+<tr>
+<td style="text-align:center">shared_timed_mutex</td>
+<td style="text-align:center">C++ 14</td>
+<td style="text-align:center">具有超时机制的可共享互斥量</td>
+</tr>
+<tr>
+<td style="text-align:center">shared_mutex</td>
+<td style="text-align:center">C++ 17</td>
+<td style="text-align:center">共享的互斥量</td>
+</tr>
+</tbody>
+</table>
+<p>这个系列的对象均提供了加锁(lock)、尝试加锁(trylock) 和 解锁(unlock) 的方法。</p>
+<p>为了避免死锁， std::mutex.lock() 和 std::mutex.unlock() 需要成对使用，同时C++11提供了一些互斥量管理的封装方法，避免忘记unlock而造成死锁。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">互斥量管理</th>
+<th style="text-align:center">版本</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">lock_guard</td>
+<td style="text-align:center">C++ 11</td>
+<td style="text-align:center">基于作用域的互斥量管理</td>
+</tr>
+<tr>
+<td style="text-align:center">unique_lock</td>
+<td style="text-align:center">C++ 11</td>
+<td style="text-align:center">更加灵活的互斥量管理</td>
+</tr>
+<tr>
+<td style="text-align:center">shared_lock</td>
+<td style="text-align:center">C++ 14</td>
+<td style="text-align:center">共享互斥量的管理</td>
+</tr>
+<tr>
+<td style="text-align:center">scope_lock</td>
+<td style="text-align:center">C++ 17</td>
+<td style="text-align:center">多互斥量避免死锁的管理</td>
+</tr>
+</tbody>
+</table>
+<p>示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lg(mymutex);</span><br><span class="line">	<span class="comment">//保护的资源操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：mymutex的声明周期必须比函数func的作用域长。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/20/线程资源同步对象-mutex/#more" rel="contents">
@@ -754,10 +811,9 @@ timed_
 
       
         
-          
-          emplace系列函数先上一段常用的代码：
-123456789101112131415161718192021222324252627282930313233343536373839404142434445464748#include &lt;iostream&gt;#include &lt;lis
-          ...
+          <h4 id="emplace系列函数"><a href="#emplace系列函数" class="headerlink" title="emplace系列函数"></a>emplace系列函数</h4><p>先上一段常用的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;list&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	Test(<span class="keyword">int</span> a, <span class="keyword">int</span> b) &#123;</span><br><span class="line">		m_a = a;</span><br><span class="line">		m_b = b;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Test constructed"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	~Test() &#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; m_a &lt;&lt; <span class="string">" Test destructed"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Test(<span class="keyword">const</span> Test&amp; t) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span> == &amp;t) &#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">this</span>-&gt;m_a = t.m_a;</span><br><span class="line">		<span class="keyword">this</span>-&gt;m_b = t.m_b;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; m_a &lt;&lt; <span class="string">" Test copy-constructed"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> m_a;</span><br><span class="line">	<span class="keyword">int</span> m_b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Test&gt; vec;</span><br><span class="line">	vec.reserve(<span class="number">20</span>);<span class="comment">//，提前分好内存 避免vector的内存重分配</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">		<span class="function">Test <span class="title">t</span><span class="params">(i, i + <span class="number">1</span>)</span></span>;</span><br><span class="line">		vec.push_back(t);</span><br><span class="line">	&#125;</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">Test constructed</span><br><span class="line"><span class="number">0</span> Test copy-constructed</span><br><span class="line"><span class="number">0</span> Test destructed</span><br><span class="line">Test constructed</span><br><span class="line"><span class="number">1</span> Test copy-constructed</span><br><span class="line"><span class="number">1</span> Test destructed</span><br><span class="line">Test constructed</span><br><span class="line"><span class="number">2</span> Test copy-constructed</span><br><span class="line"><span class="number">2</span> Test destructed</span><br></pre></td></tr></table></figure>
+<p>在这个过程中，我们的目的是为了产生一个对象数组，为了产生3个对象,调用了3*3次，这个过程执行过程：创建对象t调用构造函数—&gt;调用对象t的拷贝构造函数放入集合—&gt;调用析构函数。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/19/stl容器新增的实用方法/#more" rel="contents">
@@ -936,11 +992,14 @@ timed_
 
       
         
-          
-          for-eachC++ 11之后才开始支持for-each语法。
-示例：
-12345678std::vector&lt;std::string&gt; v_str;v_str.push_back("aaa");v_str.push_back("bbb");v_str.push_back("ccc")
-          ...
+          <h4 id="for-each"><a href="#for-each" class="headerlink" title="for-each"></a>for-each</h4><p>C++ 11之后才开始支持for-each语法。</p>
+<p>示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; v_str;</span><br><span class="line">v_str.push_back(<span class="string">"aaa"</span>);</span><br><span class="line">v_str.push_back(<span class="string">"bbb"</span>);</span><br><span class="line">v_str.push_back(<span class="string">"ccc"</span>);</span><br><span class="line">v_str.push_back(<span class="string">"ddd"</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> iter : v_str) &#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; iter.c_str() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><blockquote>
+<ol>
+<li><p>for-each中的迭代器类型与数组或集合中的元素类型完全一致，而stl容器中的迭代器是类型的取地址类型即指针，因此对于上面的例子中，iter是string类型；如果用stl迭代器，那就是指向string的指针。</p>
+</li>
+<li><p>for-each对于复杂数据类型，迭代器是原始数据的拷贝，而不是引用，在这个过程中会额外调用构造函数的开销，必要的时候可以使用<code>auto&amp; iter</code> 而不是 <code>auto iter</code> 这样就是原始数据的引用了。</p></li></ol></blockquote>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/18/foreach循环/#more" rel="contents">
@@ -1124,6 +1183,16 @@ timed_
 <blockquote>
 <p>Cpoint(point);</p>
 </blockquote>
+<p>但有些情况下，这个构造是无法定义的：</p>
+<blockquote>
+<ol>
+<li>用point的私有成员给Cpoint赋值（可以添加get方法解决），point没有定义Cpoint为友元类；</li>
+<li>没有权限修改Cpoint，只能修改point；</li>
+</ol>
+</blockquote>
+<p>这里我们可以在point重载Cpoint的构造函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">class Cpoint &#123;</span></span><br><span class="line"><span class="comment">public:</span></span><br><span class="line"><span class="comment">	Cpoint(int a) &#123;</span></span><br><span class="line"><span class="comment">		_p = a;</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment">private:</span></span><br><span class="line"><span class="comment">	int _p;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">point</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">operator</span> <span class="title">Cpoint</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Cpoint(_c_point);</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> _c_point;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>重载后，在需要point构造Cpoint时都会隐式的调用point中的重载构造函数</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/12/在一个类中重载另一个类的构造函数/#more" rel="contents">

@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/14/Redis设计与实现-字典/dictht_4.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/14/Redis设计与实现-字典/dictht_5.png">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/05/14/Redis设计与实现-字典/dictht_6.png">
-<meta property="og:updated_time" content="2019-07-05T06:36:04.992Z">
+<meta property="og:updated_time" content="2021-06-29T14:20:05.871Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis设计与实现-字典">
 <meta name="twitter:description" content="Redis的字典使用哈希表 作为底层实现，一个哈希表里面可以有多个哈希表节点，而每一个哈希表节点保存了一个键值对。  哈希表 Redis字典所使用的哈希表在dict.h/dictht结构定义。 1234567891011typedef struct dictht &amp;#123;	//哈希表数组	dictEntry **table;	//哈希表大小	unsigned long size;	//哈希表掩">
@@ -397,8 +397,8 @@
 </li>
 </ol>
 <blockquote>
-<a id="more"></a>
 <p>各个属性介绍都在注释里，这里值得注意的是<code>sizemask</code>属性的值总是等于<code>size-1</code>,这个属性值和哈希值一起决定一个键值对应该被放在<code>table</code>的哪个索引上。<br>以下为一个大小为4的空哈希表（没有任何键值对）：</p>
+<a id="more"></a>
 </blockquote>
 <p><img src="/2019/05/14/Redis设计与实现-字典/dictht_1.png" alt="空的哈希表"></p>
 <ol start="2">
@@ -486,7 +486,7 @@
   <p><span>本文标题:</span><a href="/2019/05/14/Redis设计与实现-字典/">Redis设计与实现-字典</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年05月14日 - 11:05</p>
-  <p><span>最后更新:</span>2019年07月05日 - 14:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/05/14/Redis设计与实现-字典/" title="Redis设计与实现-字典">http://TokeyRoad.github.io/2019/05/14/Redis设计与实现-字典/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/05/14/Redis设计与实现-字典/" aria-label="复制成功！"></i></span>
   </p>

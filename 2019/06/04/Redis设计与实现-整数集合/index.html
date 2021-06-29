@@ -88,7 +88,7 @@
 <meta property="og:description" content="​      整数集合（intset）是用于保存整数值的集合抽象数据结构，可以保存的类型为 int16_t、int32_t、int64_t的整数值，并且保证了集合不会出现重复的元素值。 整数集合的实现​    每个 intset.h/intset 结构表示一个整数集合： 12345678910typedef struct intset &amp;#123;	//编码方式	uint32_t encoding">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://tokeyroad.github.io/2019/06/04/Redis设计与实现-整数集合/intset_1.png">
-<meta property="og:updated_time" content="2019-07-12T07:14:19.707Z">
+<meta property="og:updated_time" content="2021-06-29T14:14:48.407Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis设计与实现(整数集合)">
 <meta name="twitter:description" content="​      整数集合（intset）是用于保存整数值的集合抽象数据结构，可以保存的类型为 int16_t、int32_t、int64_t的整数值，并且保证了集合不会出现重复的元素值。 整数集合的实现​    每个 intset.h/intset 结构表示一个整数集合： 12345678910typedef struct intset &amp;#123;	//编码方式	uint32_t encoding">
@@ -386,9 +386,9 @@
         <p>​      整数集合（intset）是用于保存整数值的集合抽象数据结构，可以保存的类型为 <code>int16_t</code>、<code>int32_t</code>、<code>int64_t</code>的整数值，并且保证了集合不会出现重复的元素值。</p>
 <h4 id="整数集合的实现"><a href="#整数集合的实现" class="headerlink" title="整数集合的实现"></a>整数集合的实现</h4><p>​    每个 <code>intset.h/intset</code> 结构表示一个整数集合：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> &#123;</span></span><br><span class="line">	<span class="comment">//编码方式</span></span><br><span class="line">	<span class="keyword">uint32_t</span> encoding;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//集合包含的元素数量</span></span><br><span class="line">	<span class="keyword">uint32_t</span> length;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//保存元素的数组</span></span><br><span class="line">	<span class="keyword">int8_t</span> contents[];</span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
 <p><code>contents</code> 数组是整数集合的底层实现：整数集合的每个元素都是 <code>contents</code>数组的一个数组项（item），各个项在数组中按值的大小从小到大有序的排列，并且数组中不包含任何重复项。</p>
 <p><code>length</code> 属性记录了整数集合包含的元素数量，也即是 <code>contents</code>数组的长度。</p>
+<a id="more"></a>
 <p>虽然 <code>contents</code> 类型是<code>int8_t</code>的数组，但是这个数组不存储任何<code>int8_t</code>类型的数据，这个数组的类型由 <code>encoding</code> 决定。</p>
 <blockquote>
 <p><code>encoding</code> 属性值为：<code>INSET_ENC_INT16</code> ,那么数组中每一个元素都是 <code>int16_t</code> 的类型的整数值 （最小值为 <code>-32,768</code> ，最大值为 <code>32,767</code> ）。 </p>
@@ -504,7 +504,7 @@
   <p><span>本文标题:</span><a href="/2019/06/04/Redis设计与实现-整数集合/">Redis设计与实现(整数集合)</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
   <p><span>发布时间:</span>2019年06月04日 - 09:06</p>
-  <p><span>最后更新:</span>2019年07月12日 - 15:07</p>
+  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
   <p><span>原始链接:</span><a href="/2019/06/04/Redis设计与实现-整数集合/" title="Redis设计与实现(整数集合)">http://TokeyRoad.github.io/2019/06/04/Redis设计与实现-整数集合/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2019/06/04/Redis设计与实现-整数集合/" aria-label="复制成功！"></i></span>
   </p>
