@@ -10,7 +10,7 @@ copyright: true
 
 涉及的算法如下：
 
-mismatch&next_permutation(prev_permutation、is_permutation)&copy&unique&rotate&move
+##### mismatch&next_permutation(prev_permutation、is_permutation)&copy&unique&rotate&move
 
 准备工作
 
@@ -41,7 +41,6 @@ void PrintVecInt(vector<int>::iterator iter_begin, vector<int>::iterator iter_en
 }
 ```
 
-<!--more-->
 生成数据（所有的排序针对index，msg只是为了标识稳定与否）
 
 ```c++
@@ -63,6 +62,8 @@ void PrintVecInt(vector<int>::iterator iter_begin, vector<int>::iterator iter_en
 ```
 
 - mismatch
+
+  <!--more-->
 
 参数：前两个参数表示第一个序列（前后），第三四个参数表示第二个序列，第五个参数可选，谓词（使用==操作符）
 

@@ -24,9 +24,9 @@ typedef struct listNode {
 ```
 由于有`prev`和`next`，多个`listNode`可以组成双端链表结构。
 
-<!--more-->
-
 2. list定义
+
+   <!--more-->
 >链表定义结构`adlist.h/list`
 ```C++
 typedef struct list{

@@ -8,7 +8,8 @@ categories:
 copyright: ture
 ---
 本次所有的算法如下：
-stable_sort&partial_sort&nth_element&is_sorted&is_sorted_until&merge&inplace_merge&find_if
+
+##### stable_sort&partial_sort&nth_element&is_sorted&is_sorted_until&merge&inplace_merge&find_if
 
 准备工作
 ```C++
@@ -28,7 +29,6 @@ void PrintVec(vector<Msg>::iterator iter_begin, vector<Msg>::iterator iter_end) 
 }
 ```
 
-<!--more-->
 生成数据（所有的排序针对index，msg只是为了标识稳定与否）
 ```C++
 	vector<Msg> v_msg;
@@ -48,7 +48,10 @@ void PrintVec(vector<Msg>::iterator iter_begin, vector<Msg>::iterator iter_end) 
 	}
 ```
 - stable_sort
-第三个参数表示 排序的要求（升降序）以及自定义方法.（稳定的排序）
+
+  <!--more-->
+
+  第三个参数表示 排序的要求（升降序）以及自定义方法.（稳定的排序）
 ```C++
 ::stable_sort(v_msg.begin(), v_msg.end(), [](const Msg& m1, const Msg& m2) {return m1.index < m2.index; });//升序(默认升序)
 ```

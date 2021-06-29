@@ -8,8 +8,11 @@ categories:
 copyright: true
 ---
 涉及的算法如下：
-adjacent_find&search_n&partition&binary_search&equal_range
+
+##### adjacent_find&search_n&partition&binary_search&equal_range
+
 准备工作
+
 ```C++
 struct Msg {
 	int index;
@@ -27,7 +30,6 @@ void PrintVec(vector<Msg>::iterator iter_begin, vector<Msg>::iterator iter_end) 
 }
 ```
 
-<!--more-->
 生成数据（所有的排序针对index，msg只是为了标识稳定与否）
 ```C++
 	vector<Msg> v_msg;
@@ -47,8 +49,11 @@ void PrintVec(vector<Msg>::iterator iter_begin, vector<Msg>::iterator iter_end) 
 	}
 ```
 - adjacent_find
-用来搜索序列中两个连续相等的元素，用==操作符来判断比较连续的两个元素
-返回值指向第一对相等的元素的第一个，如果没有就指向end
+
+  <!--more-->
+
+  用来搜索序列中两个连续相等的元素，用==操作符来判断比较连续的两个元素
+  返回值指向第一对相等的元素的第一个，如果没有就指向end
 ```C++
 	//这里先排一下序 组成测试序列
 	::stable_sort(v_msg.begin(), v_msg.end(), [](const Msg& m1, const Msg& m2) {return m1.index < m2.index; });//升序(默认升序)

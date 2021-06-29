@@ -44,6 +44,8 @@ int main() {
 
 就只能在win下运行，linux编译无法通过。
 
+<!--more-->
+
 错误原因是std::atomic的拷贝构造函数是默认=delete 禁止编译器生成的 g++遵循了，但是win上的vc++没有遵循。
 
 ```C++

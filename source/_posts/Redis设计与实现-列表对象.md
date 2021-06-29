@@ -35,6 +35,8 @@ redis> RPUSH numbers 1 "three" 5
 
 下图表示一个包含了字符串值 `“three”` 的字符串对象：
 
+<!--more-->
+
 简化表示：
 
 ![ListObject_3](Redis设计与实现-列表对象\ListObject_3.png)

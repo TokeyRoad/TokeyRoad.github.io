@@ -40,6 +40,8 @@ A command line tool for getting or sending files using URL syntax.
 
 上面这段话很清晰的表现出了 cURL 与 libcurl 以及 curl 的关系，也就是说：
 
+<!--more-->
+
 cURL 这个项目包含了 libcurl 和 curl 两个产品。 
 其中，libcurl 是一个客户端的 URL 支持库；而 curl 就是一个使用了 libcurl 库写出来的命令行工具，其可以使用 URL 标识来请求或者发送文件。
 

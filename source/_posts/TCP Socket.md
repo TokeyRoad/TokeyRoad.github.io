@@ -12,7 +12,6 @@ copyright: ture
 功能简单说明：
 服务端主线程一直阻塞在accept，每连接上一个客户端，就创建一个新的线程去处理这个客户端的消息。
 其中新线程中一直处于接收客户端的消息中，每接收一次都回复一个keep alive，当收到来自客户端stop消息时，就断开连接，并关闭当前线程。
-	<!--more-->
 
 **一.服务端**
 
@@ -46,6 +45,8 @@ if (WSAStartup(sockVersion, &wsaData) != 0) {
 		}
 ```
 3. 监听端口
+
+   <!--more-->
 ```C++
 		//int listen( int sockfd, int backlog);
 		//sockfd：用于标识一个已捆绑未连接套接口的描述字。
