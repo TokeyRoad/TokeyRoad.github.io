@@ -786,181 +786,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2019/03/19/内存区介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tokey">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/goldwood.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TokeyRoad">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/19/内存区介绍/" itemprop="url">内存区介绍</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-19T21:42:57+08:00">
-                2019-03-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index">
-                    <span itemprop="name">C++</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  263
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>内存主要分为五个区域：<br>（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。<br>（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。<br>（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时由OS回收。<br>（4）    全局区/静态区（Global Static Area）:全局变量和静态变量存放区，程序编译好之后，在程序初始化的时候，全局变量和静态变量会被初始化赋值，没有区分初始化变量和未初始化变量，需要表明一点，全局静态变量和局部静态变量都是存储在同一个静态区，只是作用域不同。<br>（5）    常量存储区:比较特殊的区域，专门用来存储一些不可修改的常量（一般是指const变量，也有一些常量字符串）。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-    <div>
-          
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2019/03/19/内存分配的实例分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1089,6 +914,181 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">0</span>; <span class="comment">//全局初始化区  </span></span><br><span class="line"><span class="keyword">char</span> *p1;  <span class="comment">//全局未初始化区(C++中则初始化为NULL)</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>  </span>&#123;  </span><br><span class="line">	    <span class="keyword">int</span> b;                  <span class="comment">//b分配在栈上，整型  </span></span><br><span class="line">	    <span class="keyword">char</span> s[] = <span class="string">"abc"</span>;       <span class="comment">//s分配在栈上，char *类型；"abc\0"分配在栈上，运行时赋值，函数结束销毁</span></span><br><span class="line">	    <span class="keyword">char</span> *p2;               <span class="comment">//p2分配在栈上，未初始化  </span></span><br><span class="line">	    <span class="keyword">char</span> *p3 = <span class="string">"123456"</span>;    <span class="comment">//p3指向"123456"分配在字符串常量存储区的地址，编译时确定  p3存储在栈上</span></span><br><span class="line">	    <span class="keyword">static</span> <span class="keyword">int</span> c = <span class="number">0</span>;       <span class="comment">//c在全局（静态）初始化区，可以多次跨函数调用而保持原值  </span></span><br><span class="line">	    p1 = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span>); <span class="comment">//p1在全局未初始化区，指向分配得来得10字节的堆区地址  </span></span><br><span class="line">	    p2 = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">20</span>); <span class="comment">//p2指向分配得来得20字节的堆区地址 </span></span><br><span class="line">	    <span class="built_in">strcpy</span>(p1, <span class="string">"123456"</span>);    <span class="comment">//"123456"放在字符串常量存储区，编译器可能会将它与p3所指向的"123456"优化成一块</span></span><br><span class="line">	    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>//实例2（找bug）<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> a[] = <span class="string">"hello"</span>;</span><br><span class="line">    <span class="comment">//a分配在栈上,char* 类型，“hellp\0”分配在栈上，运行时赋值，程序结束时销毁。</span></span><br><span class="line">    a[<span class="number">0</span>] = <span class="string">'X'</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">char</span> *p = <span class="string">"world"</span>;</span><br><span class="line">    <span class="comment">//p分配在栈上，char* 类型，“world\0”存于常量存储区（常量字符串），编译时p存入栈里。</span></span><br><span class="line">    p[<span class="number">0</span>] = <span class="string">'X'</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; p &lt;&lt; <span class="built_in">endl</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>其中字符数组a的容量是6，内容是“hello\0”，a的内容是可变的，而p分配在栈上，指向的地址在常量存储区，不可修改，因此修改p的时候会出现非法内存访问。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+    <div>
+          
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2019/03/19/内存区介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tokey">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/goldwood.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TokeyRoad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/19/内存区介绍/" itemprop="url">内存区介绍</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-19T21:42:57+08:00">
+                2019-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  263
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>内存主要分为五个区域：<br>（1）    栈（stack）：位于函数内的局部变量（包括函数实参），由编译器负责分配释放，函数结束，栈变量失效。<br>（2）    堆（Heap）：这部分是由new申请的内存，由delete或者delete[]负责释放。<br>（3）    自由存储区（Free Storage）：由程序中的malloc、calloc、realloc分配，free释放，如果未释放将造成内存泄漏，程序结束时由OS回收。<br>（4）    全局区/静态区（Global Static Area）:全局变量和静态变量存放区，程序编译好之后，在程序初始化的时候，全局变量和静态变量会被初始化赋值，没有区分初始化变量和未初始化变量，需要表明一点，全局静态变量和局部静态变量都是存储在同一个静态区，只是作用域不同。<br>（5）    常量存储区:比较特殊的区域，专门用来存储一些不可修改的常量（一般是指const变量，也有一些常量字符串）。</p>
 
           
         
