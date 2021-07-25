@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://TokeyRoad.github.io/"/>
-  <updated>2021-07-07T15:45:09.198Z</updated>
+  <updated>2021-07-25T12:16:47.181Z</updated>
   <id>http://TokeyRoad.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>缓存穿透/击穿/雪崩</title>
+    <link href="http://TokeyRoad.github.io/2021/07/25/%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F-%E5%87%BB%E7%A9%BF-%E9%9B%AA%E5%B4%A9/"/>
+    <id>http://TokeyRoad.github.io/2021/07/25/缓存穿透-击穿-雪崩/</id>
+    <published>2021-07-25T11:57:13.000Z</published>
+    <updated>2021-07-25T12:16:47.181Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-缓存处理流程。"><a href="#1-缓存处理流程。" class="headerlink" title="1.缓存处理流程。"></a>1.缓存处理流程。</h3><p>​    前台请求，后台先从缓存中取数据，取到之后直接返回结果，取不到时从数据库取，数据库取到更新缓存</p><p>并返回，取不到直接返回空结果。</p><h3 id="2-缓存穿透"><a href="#2-缓存穿透" class="headerlink" title="2.缓存穿透"></a>2.缓存穿透</h3><p>问题：是指缓存和数据库中都没有的数据，而用户不断发起请求，这时用户可能是攻击者，攻击会导致数据库压力过大。</p><p>解决：</p><pre><code>1. 接口层增加校验，例如用户权限校验，合法性校验，请求校验。 2. 缓存中取不到的数据，数据库中也不存在，可暂时设置一个key-null键值对，有效时间较短，防止用户对同一个数据进行暴力攻击。</code></pre><h3 id="3-缓存击穿"><a href="#3-缓存击穿" class="headerlink" title="3.缓存击穿"></a>3.缓存击穿</h3><p>问题：是指缓存中没有但是数据库中有的数据，这时由于并发用户较多，同时读缓存没读到数据，同时去数据库取数据，引起数据库瞬间压力过大。</p><p>解决：</p><pre><code>1. 设置热点数据永不过期。 2. 热点数据互斥锁处理。</code></pre><h3 id="4-缓存雪崩"><a href="#4-缓存雪崩" class="headerlink" title="4.缓存雪崩"></a>4.缓存雪崩</h3><p>描述：是指缓存中数据大批量到期时间，而查询数据量巨大，引起数据库压力过大，缓存击穿指的是并发查同一条数据，雪崩是不同的数据都过期了，很多数据都查不到从而查数据库。</p><p>解决：</p><pre><code>1. 数据缓存时间差异化，减少同一时间大量数据过期现象发生。 2. 缓存数据分布式处理，热点数据均匀分布在不同的缓存数据库中。 3. 热点数据永不过期。（可以根据一定的权重定期清理热点数据）</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;1-缓存处理流程。&quot;&gt;&lt;a href=&quot;#1-缓存处理流程。&quot; class=&quot;headerlink&quot; title=&quot;1.缓存处理流程。&quot;&gt;&lt;/a&gt;1.缓存处理流程。&lt;/h3&gt;&lt;p&gt;​    前台请求，后台先从缓存中取数据，取到之后直接返回结果，取不到时从数据库取，
+      
+    
+    </summary>
+    
+      <category term="C++" scheme="http://TokeyRoad.github.io/categories/C/"/>
+    
+    
+      <category term="缓存" scheme="http://TokeyRoad.github.io/tags/%E7%BC%93%E5%AD%98/"/>
+    
+  </entry>
   
   <entry>
     <title>go编码相关01</title>
@@ -611,31 +636,6 @@
       
       
         &lt;h5 id=&quot;char-赋值给std-string的一些陷阱&quot;&gt;&lt;a href=&quot;#char-赋值给std-string的一些陷阱&quot; class=&quot;headerlink&quot; title=&quot;char*赋值给std::string的一些陷阱&quot;&gt;&lt;/a&gt;char*赋值给std::str
-      
-    
-    </summary>
-    
-      <category term="C++" scheme="http://TokeyRoad.github.io/categories/C/"/>
-    
-    
-      <category term="C++" scheme="http://TokeyRoad.github.io/tags/C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>strcmp实现</title>
-    <link href="http://TokeyRoad.github.io/2020/04/28/strcmp%E5%AE%9E%E7%8E%B0/"/>
-    <id>http://TokeyRoad.github.io/2020/04/28/strcmp实现/</id>
-    <published>2020-04-28T01:54:39.000Z</published>
-    <updated>2020-04-28T07:02:45.340Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="strcmp函数实现以及分析"><a href="#strcmp函数实现以及分析" class="headerlink" title="strcmp函数实现以及分析"></a>strcmp函数实现以及分析</h4><h5 id="strcmp函数原型"><a href="#strcmp函数原型" class="headerlink" title="strcmp函数原型"></a>strcmp函数原型</h5><blockquote><p>int strcmp(const char<em> str1, const char</em> str2);</p><p>str1 &lt; str2 返回负值或-1</p><p>str1 == str2 返回0</p><p>str1 &gt; str2 返回正值或1</p></blockquote><h5 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h5><p>该函数实际上是对字符的ASCII码进行比较，实现方案：从前往后依次比较两个字符串的字符，如果不相等，就停止比较并返回结果，如果相等就继续，直到其中一个字符串遇到结束符’\0’为止。</p><h5 id="Linux源码"><a href="#Linux源码" class="headerlink" title="Linux源码"></a>Linux源码</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strcmp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* str1, <span class="keyword">const</span> <span class="keyword">char</span>* str2)</span></span>&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> c1, c2;</span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">c1 = *str1++;</span><br><span class="line">c2 = *str2++;</span><br><span class="line"><span class="keyword">if</span>(c1 != c2)<span class="keyword">return</span> (c1 &lt; c2) ? <span class="number">-1</span> : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(!c1)<span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>自己用减法实现</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strcmpNew2</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* str1, <span class="keyword">const</span> <span class="keyword">char</span>* str2)</span> </span>&#123;</span><br><span class="line"><span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (!(ret = *(<span class="keyword">unsigned</span> <span class="keyword">char</span>*)str1 - *(<span class="keyword">unsigned</span> <span class="keyword">char</span>*)str2) &amp;&amp; *str1) &#123;</span><br><span class="line">str1++;</span><br><span class="line">str2++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> ret;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//if (ret &lt; 0)&#123;</span></span><br><span class="line"><span class="comment">//return -1;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//else if (ret &gt; 0)&#123;</span></span><br><span class="line"><span class="comment">//return 1;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//return 0;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><p>这个函数体内没有判断参数为NULL时的情况，所以当传入NULL时程序会崩溃，<string>中的strcmp也会崩溃</string></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h4 id=&quot;strcmp函数实现以及分析&quot;&gt;&lt;a href=&quot;#strcmp函数实现以及分析&quot; class=&quot;headerlink&quot; title=&quot;strcmp函数实现以及分析&quot;&gt;&lt;/a&gt;strcmp函数实现以及分析&lt;/h4&gt;&lt;h5 id=&quot;strcmp函数原型&quot;&gt;&lt;a hr
       
     
     </summary>

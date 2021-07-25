@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="git,hexo,">
+  <meta name="keywords" content="缓存,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="1.安装node.js和git这个不用多说，直接下载安装就行了。 2.配置 git 个人信息，生成新的 ssh 密钥：git config –global user.name “xxxxxx” git config –global user.email “xxxxxx” ssh-keygen -t rsa -C “xxxxxxxx(邮箱)” 3.添加公钥在用户文件夹.ssh 文件里面把公钥复制出来">
-<meta name="keywords" content="git,hexo">
+<meta name="description" content="1.缓存处理流程。​    前台请求，后台先从缓存中取数据，取到之后直接返回结果，取不到时从数据库取，数据库取到更新缓存 并返回，取不到直接返回空结果。 2.缓存穿透问题：是指缓存和数据库中都没有的数据，而用户不断发起请求，这时用户可能是攻击者，攻击会导致数据库压力过大。 解决： 1. 接口层增加校验，例如用户权限校验，合法性校验，请求校验。  2. 缓存中取不到的数据，数据库中也不存在，可暂时设">
+<meta name="keywords" content="缓存">
 <meta property="og:type" content="article">
-<meta property="og:title" content="重装系统之后hexo博客恢复">
-<meta property="og:url" content="http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/index.html">
+<meta property="og:title" content="缓存穿透&#x2F;击穿&#x2F;雪崩">
+<meta property="og:url" content="http://TokeyRoad.github.io/2021/07/25/缓存穿透-击穿-雪崩/index.html">
 <meta property="og:site_name" content="TokeyRoad">
-<meta property="og:description" content="1.安装node.js和git这个不用多说，直接下载安装就行了。 2.配置 git 个人信息，生成新的 ssh 密钥：git config –global user.name “xxxxxx” git config –global user.email “xxxxxx” ssh-keygen -t rsa -C “xxxxxxxx(邮箱)” 3.添加公钥在用户文件夹.ssh 文件里面把公钥复制出来">
+<meta property="og:description" content="1.缓存处理流程。​    前台请求，后台先从缓存中取数据，取到之后直接返回结果，取不到时从数据库取，数据库取到更新缓存 并返回，取不到直接返回空结果。 2.缓存穿透问题：是指缓存和数据库中都没有的数据，而用户不断发起请求，这时用户可能是攻击者，攻击会导致数据库压力过大。 解决： 1. 接口层增加校验，例如用户权限校验，合法性校验，请求校验。  2. 缓存中取不到的数据，数据库中也不存在，可暂时设">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-06-29T14:22:07.593Z">
+<meta property="og:updated_time" content="2021-07-25T12:16:47.181Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="重装系统之后hexo博客恢复">
-<meta name="twitter:description" content="1.安装node.js和git这个不用多说，直接下载安装就行了。 2.配置 git 个人信息，生成新的 ssh 密钥：git config –global user.name “xxxxxx” git config –global user.email “xxxxxx” ssh-keygen -t rsa -C “xxxxxxxx(邮箱)” 3.添加公钥在用户文件夹.ssh 文件里面把公钥复制出来">
+<meta name="twitter:title" content="缓存穿透&#x2F;击穿&#x2F;雪崩">
+<meta name="twitter:description" content="1.缓存处理流程。​    前台请求，后台先从缓存中取数据，取到之后直接返回结果，取不到时从数据库取，数据库取到更新缓存 并返回，取不到直接返回空结果。 2.缓存穿透问题：是指缓存和数据库中都没有的数据，而用户不断发起请求，这时用户可能是攻击者，攻击会导致数据库压力过大。 解决： 1. 接口层增加校验，例如用户权限校验，合法性校验，请求校验。  2. 缓存中取不到的数据，数据库中也不存在，可暂时设">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/">
+  <link rel="canonical" href="http://TokeyRoad.github.io/2021/07/25/缓存穿透-击穿-雪崩/">
 
 
 
 
 
-  <title>重装系统之后hexo博客恢复 | TokeyRoad</title>
+  <title>缓存穿透/击穿/雪崩 | TokeyRoad</title>
   
 
 
@@ -256,7 +256,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/">
+    <link itemprop="mainEntityOfPage" href="http://TokeyRoad.github.io/2021/07/25/缓存穿透-击穿-雪崩/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Tokey">
@@ -273,7 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">重装系统之后hexo博客恢复</h1>
+          <h1 class="post-title" itemprop="name headline">缓存穿透/击穿/雪崩</h1>
         
 
         <div class="post-meta">
@@ -285,8 +285,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-22T21:57:11+08:00">
-                2020-11-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-25T19:57:13+08:00">
+                2021-07-25
               </time>
             
 
@@ -308,8 +308,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/环境配置/" itemprop="url" rel="index">
-                    <span itemprop="name">环境配置</span>
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
                   </a>
                 </span>
 
@@ -344,7 +344,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  552
+                  442
                 </span>
               
 
@@ -360,7 +360,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  1
                 </span>
               
             </div>
@@ -381,18 +381,22 @@
       
 
       
-        <h3 id="1-安装node-js和git"><a href="#1-安装node-js和git" class="headerlink" title="1.安装node.js和git"></a>1.安装node.js和git</h3><p>这个不用多说，直接下载安装就行了。</p>
-<h3 id="2-配置-git-个人信息，生成新的-ssh-密钥："><a href="#2-配置-git-个人信息，生成新的-ssh-密钥：" class="headerlink" title="2.配置 git 个人信息，生成新的 ssh 密钥："></a>2.配置 git 个人信息，生成新的 ssh 密钥：</h3><p>git config –global user.name “xxxxxx”<br> git config –global user.email “xxxxxx”<br> ssh-keygen -t rsa -C “xxxxxxxx(邮箱)”</p>
-<h3 id="3-添加公钥"><a href="#3-添加公钥" class="headerlink" title="3.添加公钥"></a>3.添加公钥</h3><p>在用户文件夹.ssh 文件里面把公钥复制出来粘贴到github个人设置的ssh位置。</p>
-<h3 id="4-安装hexo"><a href="#4-安装hexo" class="headerlink" title="4.安装hexo"></a>4.安装hexo</h3><p> npm install hexo-cli -g</p>
-<h3 id="5-删除博客文件夹文件，保留部分"><a href="#5-删除博客文件夹文件，保留部分" class="headerlink" title="5.删除博客文件夹文件，保留部分"></a>5.删除博客文件夹文件，保留部分</h3><p>必须拷贝文件：<br> ├──_config.yml<br> ├── theme<br> ├── scaffolds #文章模板<br> ├── package.json #说明使用哪些包<br> ├── .gitignore #限定在提交的时候哪些文件可以忽略<br> └── source</p>
-<a id="more"></a>
-<p>（1）讨论下哪些文件是必须拷贝的：首先是之前自己修改的文件，像站点配置_config.yml，theme文件夹里面的主题，以及source里面自己写的博客文件，这些肯定要拷贝的。除此之外，还有三个文件需要有，就是scaffolds文件夹（文章的模板）、package.json（说明使用哪些包）和.gitignore（限定在提交的时候哪些文件可以忽略）。其实，这三个文件不是我们修改的，所以即使丢失了，也没有关系，我们可以建立一个新的文件夹，然后在里面执行hexo init，就会生成这三个文件，我们只需要将它们拷贝过来使用即可。总结：_config.yml，theme/，source/，scaffolds/，package.json，.gitignore，是需要拷贝的。</p>
-<p>（2）再讨论下哪些文件是不必拷贝的，或者说可以删除的：首先是.git文件，无论是在站点根目录下，还是主题目录下的.git文件，都可以删掉。然后是文件夹node_modules（在用npm install会重新生成），public（这个在用hexo g时会重新生成），.deploy_git文件夹（在使用hexo d时也会重新生成），db.json文件。其实上面这些文件也就是是.gitignore文件里面记载的可以忽略的内容。总结：.git/，node_modules/，public/，.deploy_git/，db.json文件需要删除。</p>
-<h3 id="6-git-bash"><a href="#6-git-bash" class="headerlink" title="6.git bash"></a>6.git bash</h3><p>在本文件夹下git bash,运行npm install</p>
-<h3 id="7-安装部署插件-可选"><a href="#7-安装部署插件-可选" class="headerlink" title="7.安装部署插件(可选)"></a>7.安装部署插件(可选)</h3><p>npm install hexo-deployer-git –save</p>
-<h3 id="8-测试"><a href="#8-测试" class="headerlink" title="8.测试"></a>8.测试</h3><p>此时就可以hexo g &amp;&amp; hexo d 测试是否成功了。</p>
-
+        <h3 id="1-缓存处理流程。"><a href="#1-缓存处理流程。" class="headerlink" title="1.缓存处理流程。"></a>1.缓存处理流程。</h3><p>​    前台请求，后台先从缓存中取数据，取到之后直接返回结果，取不到时从数据库取，数据库取到更新缓存</p>
+<p>并返回，取不到直接返回空结果。</p>
+<h3 id="2-缓存穿透"><a href="#2-缓存穿透" class="headerlink" title="2.缓存穿透"></a>2.缓存穿透</h3><p>问题：是指缓存和数据库中都没有的数据，而用户不断发起请求，这时用户可能是攻击者，攻击会导致数据库压力过大。</p>
+<p>解决：</p>
+<pre><code>1. 接口层增加校验，例如用户权限校验，合法性校验，请求校验。
+ 2. 缓存中取不到的数据，数据库中也不存在，可暂时设置一个key-null键值对，有效时间较短，防止用户对同一个数据进行暴力攻击。
+</code></pre><h3 id="3-缓存击穿"><a href="#3-缓存击穿" class="headerlink" title="3.缓存击穿"></a>3.缓存击穿</h3><p>问题：是指缓存中没有但是数据库中有的数据，这时由于并发用户较多，同时读缓存没读到数据，同时去数据库取数据，引起数据库瞬间压力过大。</p>
+<p>解决：</p>
+<pre><code>1. 设置热点数据永不过期。
+ 2. 热点数据互斥锁处理。
+</code></pre><h3 id="4-缓存雪崩"><a href="#4-缓存雪崩" class="headerlink" title="4.缓存雪崩"></a>4.缓存雪崩</h3><p>描述：是指缓存中数据大批量到期时间，而查询数据量巨大，引起数据库压力过大，缓存击穿指的是并发查同一条数据，雪崩是不同的数据都过期了，很多数据都查不到从而查数据库。</p>
+<p>解决：</p>
+<pre><code>1. 数据缓存时间差异化，减少同一时间大量数据过期现象发生。
+ 2. 缓存数据分布式处理，热点数据均匀分布在不同的缓存数据库中。
+ 3. 热点数据永不过期。（可以根据一定的权重定期清理热点数据）
+</code></pre>
       
     </div>
     
@@ -407,12 +411,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2020/11/22/重装系统之后hexo博客恢复/">重装系统之后hexo博客恢复</a></p>
+  <p><span>本文标题:</span><a href="/2021/07/25/缓存穿透-击穿-雪崩/">缓存穿透/击穿/雪崩</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Tokey 的个人博客">Tokey</a></p>
-  <p><span>发布时间:</span>2020年11月22日 - 21:11</p>
-  <p><span>最后更新:</span>2021年06月29日 - 22:06</p>
-  <p><span>原始链接:</span><a href="/2020/11/22/重装系统之后hexo博客恢复/" title="重装系统之后hexo博客恢复">http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/</a>
-    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2020/11/22/重装系统之后hexo博客恢复/" aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2021年07月25日 - 19:07</p>
+  <p><span>最后更新:</span>2021年07月25日 - 20:07</p>
+  <p><span>原始链接:</span><a href="/2021/07/25/缓存穿透-击穿-雪崩/" title="缓存穿透/击穿/雪崩">http://TokeyRoad.github.io/2021/07/25/缓存穿透-击穿-雪崩/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://TokeyRoad.github.io/2021/07/25/缓存穿透-击穿-雪崩/" aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
 </div>
@@ -442,9 +446,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/git/" rel="tag"># git</a>
-          
-            <a href="/tags/hexo/" rel="tag"># hexo</a>
+            <a href="/tags/缓存/" rel="tag"># 缓存</a>
           
         </div>
       
@@ -457,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/05/29/智能指针类/" rel="next" title="智能指针类">
-                <i class="fa fa-chevron-left"></i> 智能指针类
+              <a href="/2021/07/07/go编码相关01/" rel="next" title="go编码相关01">
+                <i class="fa fa-chevron-left"></i> go编码相关01
               </a>
             
           </div>
@@ -466,10 +468,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/11/22/解决git每次推送都要输入用户名密码的方案/" rel="prev" title="解决git每次推送都要输入用户名密码的方案">
-                解决git每次推送都要输入用户名密码的方案 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -645,7 +643,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安装node-js和git"><span class="nav-number">1.</span> <span class="nav-text">1.安装node.js和git</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置-git-个人信息，生成新的-ssh-密钥："><span class="nav-number">2.</span> <span class="nav-text">2.配置 git 个人信息，生成新的 ssh 密钥：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-添加公钥"><span class="nav-number">3.</span> <span class="nav-text">3.添加公钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-安装hexo"><span class="nav-number">4.</span> <span class="nav-text">4.安装hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-删除博客文件夹文件，保留部分"><span class="nav-number">5.</span> <span class="nav-text">5.删除博客文件夹文件，保留部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-git-bash"><span class="nav-number">6.</span> <span class="nav-text">6.git bash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-安装部署插件-可选"><span class="nav-number">7.</span> <span class="nav-text">7.安装部署插件(可选)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-测试"><span class="nav-number">8.</span> <span class="nav-text">8.测试</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-缓存处理流程。"><span class="nav-number">1.</span> <span class="nav-text">1.缓存处理流程。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-缓存穿透"><span class="nav-number">2.</span> <span class="nav-text">2.缓存穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-缓存击穿"><span class="nav-number">3.</span> <span class="nav-text">3.缓存击穿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-缓存雪崩"><span class="nav-number">4.</span> <span class="nav-text">4.缓存雪崩</span></a></li></ol></div>
             
 
           </div>
